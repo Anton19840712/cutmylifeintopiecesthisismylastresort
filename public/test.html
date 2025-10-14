@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>WebSocket Test</title>
+</head>
+<body style="font-family: monospace; padding: 20px; background: #000; color: #0f0;">
+    <h2>WebSocket Connection Test</h2>
+    <div id="log"></div>
+
+    <script>
+        const log = document.getElementById('log');
+
+        function addLog(msg) {
+            const time = new Date().toLocaleTimeString();
+            log.innerHTML += `[${time}] ${msg}<br>`;
+            console.log(msg);
+        }
+
+        addLog('Страница загружена');
+        addLog('Пытаюсь подключиться к ws://localhost:8088...');
+
+        try {
+            const ws = new WebSocket('ws://localhost:8088');
+
+            ws.onopen = () => {
+                addLog('✓ WebSocket ПОДКЛЮЧЕН!');
+                addLog('Отправляю тестовое сообщение...');
+                ws.send('TEST MESSAGE');
+            };
+
+            ws.onmessage = (event) => {
+                addLog(`← Получено: ${event.data}`);
+            };
+
+            ws.onerror = (error) => {
+                addLog(`✗ ОШИБКА WebSocket: ${error}`);
+            };
+
+            ws.onclose = () => {
+                addLog('WebSocket закрыт');
+            };
+        } catch (e) {
+            addLog(`✗ ИСКЛЮЧЕНИЕ: ${e.message}`);
+        }
+    </script>
+</body>
+</html>

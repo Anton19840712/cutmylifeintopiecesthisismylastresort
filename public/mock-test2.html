@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"><title>Mock Test 2: SIP REGISTER</title></head>
+<body style="font-family:monospace;padding:20px;background:#000;color:#0f0">
+<h2>MOK TEST 2: SIP REGISTER</h2>
+<button onclick="test()">RUN SIP REGISTER TEST</button>
+<div id="log"></div>
+<script>
+let ws;
+function log(m){document.getElementById('log').innerHTML+=m+'<br>';console.log(m)}
+
+function test(){
+    log('TEST START: SIP REGISTER');
+    log('1. Подключаюсь к ws://localhost:8088...');
+    ws=new WebSocket('ws://localhost:8088');
+
+    ws.onopen=()=>{
+        log('2. ✓ WebSocket открыт');
+
+        // Создаем простое SIP REGISTER сообщение
+        const sipRegister =
+`REGISTER sip:sip.linphone.org SIP/2.0
+Via: SIP/2.0/WS localhost:8088;branch=z9hG4bK123456
+Max-Forwards: 70
+From: <sip:anton-test@sip.linphone.org>;tag=abcdef
+To: <sip:anton-test@sip.linphone.org>
+Call-ID: test123@localhost
+CSeq: 1 REGISTER
+Contact: <sip:anton-test@localhost:8088;transport=ws>
+Expires: 600
+Content-Length: 0
+
+`;
+
+        log('3. Отправляю SIP REGISTER...');
+        log('   URI: anton-test@sip.linphone.org');
+        ws.send(sipRegister);
+    };
+
+    ws.onmessage=(e)=>{
+        log('4. ✓ ОТВЕТ ОТ SIP СЕРВЕРА:');
+        const lines = e.data.split('\n');
+        lines.forEach(line => log('   ' + line));
+    };
+
+    ws.onerror=(e)=>log('ERROR: '+e);
+    ws.onclose=()=>log('5. WebSocket закрыт');
+}
+</script>
+</body>
+</html>

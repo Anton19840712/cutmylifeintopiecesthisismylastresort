@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><title>Test CDN</title></head>
+<body style="font-family:monospace;padding:20px">
+<h2>Testing JsSIP CDN Sources</h2>
+<div id="log"></div>
+
+<script>
+const log = (msg) => document.getElementById('log').innerHTML += msg + '<br>';
+
+log('1. Testing jsdelivr...');
+const s1 = document.createElement('script');
+s1.src = 'https://cdn.jsdelivr.net/npm/jssip@3.10.1/dist/jssip.min.js';
+s1.onload = () => log('✓ jsdelivr LOADED: ' + (typeof JsSIP));
+s1.onerror = () => log('✗ jsdelivr FAILED');
+document.head.appendChild(s1);
+
+setTimeout(() => {
+    log('2. Testing cdnjs...');
+    const s2 = document.createElement('script');
+    s2.src = 'https://cdnjs.cloudflare.com/ajax/libs/jssip/3.10.1/jssip.min.js';
+    s2.onload = () => log('✓ cdnjs LOADED: ' + (typeof JsSIP));
+    s2.onerror = () => log('✗ cdnjs FAILED');
+    document.head.appendChild(s2);
+}, 2000);
+
+setTimeout(() => {
+    log('3. Testing unpkg...');
+    const s3 = document.createElement('script');
+    s3.src = 'https://unpkg.com/jssip@3.10.1';
+    s3.onload = () => log('✓ unpkg LOADED: ' + (typeof JsSIP));
+    s3.onerror = () => log('✗ unpkg FAILED');
+    document.head.appendChild(s3);
+}, 4000);
+
+setTimeout(() => {
+    if (typeof JsSIP !== 'undefined') {
+        log('\n✓✓✓ JsSIP IS AVAILABLE!');
+        log('Version: ' + JsSIP.version);
+    } else {
+        log('\n✗✗✗ ALL CDNs FAILED - NO INTERNET OR FIREWALL');
+        log('Используйте simple-client.html вместо этого');
+    }
+}, 7000);
+</script>
+</body>
+</html>

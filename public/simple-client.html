@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Simple SIP Client</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+<style>
+body{font-family:monospace;padding:20px;background:#1e1e1e;color:#0f0}
+button{padding:10px;margin:5px;font-size:16px}
+#log{white-space:pre-wrap;background:#000;padding:10px;margin-top:20px;max-height:400px;overflow-y:auto}
+</style>
+</head>
+<body>
+<h2>Simple SIP Client</h2>
+<button onclick="connect()">CONNECT & REGISTER</button>
+<div id="log"></div>
+
+<script>
+let ws;
+const log = (m) => {
+    document.getElementById('log').innerHTML += `[${new Date().toLocaleTimeString()}] ${m}\n`;
+    console.log(m);
+};
+
+const username = 'anton-test';
+const password = 'Ant6729@$%#';
+const server = 'sip.linphone.org';
+const branch = 'z9hG4bK' + Math.random().toString(36).substr(2, 9);
+const callId = Math.random().toString(36).substr(2, 9) + '@' + server;
+const tag = Math.random().toString(36).substr(2, 9);
+
+function connect() {
+    log('Подключаюсь к WebSocket...');
+    ws = new WebSocket('ws://localhost:8088');
+
+    ws.onopen = () => {
+        log('✓ WebSocket открыт');
+        sendRegister();
+    };
+
+    ws.onmessage = (e) => {
+        log('\n← ОТВЕТ:');
+        log(e.data);
+
+        // Проверяем на 401 Unauthorized
+        if (e.data.includes('401 Unauthorized') || e.data.includes('401')) {
+            log('\nПолучен 401 - нужна аутентификация');
+            handleAuth(e.data);
+        } else if (e.data.includes('200 OK')) {
+            log('\n✓✓✓ УСПЕШНАЯ РЕГИСТРАЦИЯ!');
+        }
+    };
+
+    ws.onerror = (e) => log('ERROR: ' + e);
+    ws.onclose = () => log('WebSocket закрыт');
+}
+
+function sendRegister() {
+    const msg =
+`REGISTER sip:${server} SIP/2.0\r
+Via: SIP/2.0/WS localhost;branch=${branch};rport\r
+Max-Forwards: 70\r
+From: <sip:${username}@${server}>;tag=${tag}\r
+To: <sip:${username}@${server}>\r
+Call-ID: ${callId}\r
+CSeq: 1 REGISTER\r
+Contact: <sip:${username}@localhost;transport=ws>\r
+Expires: 600\r
+User-Agent: SimpleClient/1.0\r
+Content-Length: 0\r
+\r
+`;
+
+    log('\n→ Отправляю REGISTER без auth:');
+    ws.send(msg);
+}
+
+function handleAuth(response) {
+    // Парсим WWW-Authenticate
+    const authMatch = response.match(/WWW-Authenticate:\s*Digest\s+(.+)/i);
+    if (!authMatch) {
+        log('ERROR: Не найден WWW-Authenticate header');
+        return;
+    }
+
+    const authStr = authMatch[1];
+    log('Auth string: ' + authStr);
+
+    // Извлекаем realm, nonce, algorithm
+    const realm = (authStr.match(/realm="([^"]+)"/)||[])[1] || server;
+    const nonce = (authStr.match(/nonce="([^"]+)"/)||[])[1];
+    const algorithm = (authStr.match(/algorithm=([^,\s]+)/)||[])[1] || 'MD5';
+
+    log(`Realm: ${realm}`);
+    log(`Nonce: ${nonce}`);
+    log(`Algorithm: ${algorithm}`);
+
+    if (!nonce) {
+        log('ERROR: Нет nonce');
+        return;
+    }
+
+    // Вычисляем response
+    const uri = `sip:${server}`;
+    const ha1 = CryptoJS.MD5(`${username}:${realm}:${password}`).toString();
+    const ha2 = CryptoJS.MD5(`REGISTER:${uri}`).toString();
+    const responseHash = CryptoJS.MD5(`${ha1}:${nonce}:${ha2}`).toString();
+
+    log(`HA1: ${ha1}`);
+    log(`HA2: ${ha2}`);
+    log(`Response: ${responseHash}`);
+
+    // Отправляем REGISTER с аутентификацией
+    const newBranch = 'z9hG4bK' + Math.random().toString(36).substr(2, 9);
+    const authMsg =
+`REGISTER sip:${server} SIP/2.0\r
+Via: SIP/2.0/WS localhost;branch=${newBranch};rport\r
+Max-Forwards: 70\r
+From: <sip:${username}@${server}>;tag=${tag}\r
+To: <sip:${username}@${server}>\r
+Call-ID: ${callId}\r
+CSeq: 2 REGISTER\r
+Contact: <sip:${username}@localhost;transport=ws>\r
+Authorization: Digest username="${username}",realm="${realm}",nonce="${nonce}",uri="${uri}",response="${responseHash}",algorithm=${algorithm}\r
+Expires: 600\r
+User-Agent: SimpleClient/1.0\r
+Content-Length: 0\r
+\r
+`;
+
+    log('\n→ Отправляю REGISTER с auth:');
+    ws.send(authMsg);
+}
+</script>
+</body>
+</html>

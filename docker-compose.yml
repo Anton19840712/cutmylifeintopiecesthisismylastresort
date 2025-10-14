@@ -1,0 +1,14 @@
+services:
+  janus:
+    image: canyan/janus-gateway:latest
+    container_name: janus-webrtc-gateway
+    hostname: janus
+    ports:
+      - "8088:8088"
+      - "8188:8188"
+      - "20000-20100:20000-20100/udp"
+    environment:
+      - DOCKER_IP=127.0.0.1
+    volumes:
+      - ./janus-config:/usr/local/etc/janus:rw
+    restart: unless-stopped
