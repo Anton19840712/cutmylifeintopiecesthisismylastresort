@@ -226,12 +226,12 @@ certificates: {
 media: {
 	#ipv6 = true
 	#ipv6_linklocal = true
-	#min_nack_queue = 500
+	min_nack_queue = 1000		# Увеличиваем буфер для ретрансмиссий (улучшает качество при потерях)
 	rtp_port_range = "20000-40000"
 	#dtls_mtu = 1200
-	#no_media_timer = 1
-	#slowlink_threshold = 4
-	#twcc_period = 100
+	no_media_timer = 2			# Увеличиваем таймер перед уведомлением о потере медиа
+	slowlink_threshold = 8		# Порог потерянных пакетов для slowlink событий
+	twcc_period = 100			# Быстрее отправляем feedback для контроля перегрузки
 	#dtls_timeout = 500
 
 	# Janus can do some optimizations on the NACK queue, specifically when
