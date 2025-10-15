@@ -63,7 +63,7 @@ C:\попытка sip\
 ```mermaid
 sequenceDiagram
     participant Browser as Браузер (janus-simple.html)
-    participant CSharp as C# Server :8081
+    participant CSharp as ASP.NET Core :8081
     participant Janus as Janus Gateway :8088
     participant SIP as SIP Server (linphone.org)
     participant Remote as Удаленный абонент
