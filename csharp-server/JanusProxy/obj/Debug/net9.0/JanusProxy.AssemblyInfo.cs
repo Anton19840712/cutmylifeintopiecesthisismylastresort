@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("JanusProxy")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+2ee6e44888dbf44eb7142c449a89235f11ad14ff")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+68478a16b8b67e917a89d3042e5b0ce710716426")]
 [assembly: System.Reflection.AssemblyProductAttribute("JanusProxy")]
 [assembly: System.Reflection.AssemblyTitleAttribute("JanusProxy")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

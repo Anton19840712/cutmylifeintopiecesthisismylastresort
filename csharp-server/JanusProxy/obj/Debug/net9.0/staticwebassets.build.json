@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "sZv1lVvcCvYfO+U2421gDXSWxLaKsQlQcN5rh7hxWdg=",
+  "Hash": "syjYRHZRPW51qewwnjfTEith6XWZesPZc5TCMTK2n/4=",
   "Source": "JanusProxy",
   "BasePath": "_content/JanusProxy",
   "Mode": "Default",
@@ -17,33 +17,12 @@
   ],
   "Assets": [
     {
-      "Identity": "C:\\попытка sip\\csharp-server\\JanusProxy\\obj\\Debug\\net9.0\\compressed\\cyx7fb5tyo-400khl6gpw.gz",
+      "Identity": "C:\\попытка sip\\csharp-server\\JanusProxy\\obj\\Debug\\net9.0\\compressed\\lh38kak3f6-2ymudiuiu0.gz",
       "SourceId": "JanusProxy",
       "SourceType": "Discovered",
       "ContentRoot": "C:\\попытка sip\\csharp-server\\JanusProxy\\obj\\Debug\\net9.0\\compressed\\",
       "BasePath": "_content/JanusProxy",
-      "RelativePath": "index#[.{fingerprint=400khl6gpw}]?.html.gz",
-      "AssetKind": "All",
-      "AssetMode": "All",
-      "AssetRole": "Alternative",
-      "AssetMergeBehavior": "",
-      "AssetMergeSource": "",
-      "RelatedAsset": "C:\\попытка sip\\csharp-server\\JanusProxy\\wwwroot\\index.html",
-      "AssetTraitName": "Content-Encoding",
-      "AssetTraitValue": "gzip",
-      "Fingerprint": "k8bvh4jow8",
-      "Integrity": "XESnYuXV+Xefh9uJwQfC5airr//WxZX84I+6T8RBFzE=",
-      "CopyToOutputDirectory": "Never",
-      "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "C:\\попытка sip\\csharp-server\\JanusProxy\\wwwroot\\index.html"
-    },
-    {
-      "Identity": "C:\\попытка sip\\csharp-server\\JanusProxy\\obj\\Debug\\net9.0\\compressed\\lh38kak3f6-1g6fy6y85p.gz",
-      "SourceId": "JanusProxy",
-      "SourceType": "Discovered",
-      "ContentRoot": "C:\\попытка sip\\csharp-server\\JanusProxy\\obj\\Debug\\net9.0\\compressed\\",
-      "BasePath": "_content/JanusProxy",
-      "RelativePath": "adapter#[.{fingerprint=1g6fy6y85p}]?.js.gz",
+      "RelativePath": "adapter#[.{fingerprint=2ymudiuiu0}]?.js.gz",
       "AssetKind": "All",
       "AssetMode": "All",
       "AssetRole": "Alternative",
@@ -52,11 +31,32 @@
       "RelatedAsset": "C:\\попытка sip\\csharp-server\\JanusProxy\\wwwroot\\adapter.js",
       "AssetTraitName": "Content-Encoding",
       "AssetTraitValue": "gzip",
-      "Fingerprint": "9b3ddyvnn8",
-      "Integrity": "+wg+Hc8sf6ypc8j05YrjpXxUnibPM4P8VgCWHzHdGJY=",
+      "Fingerprint": "yr03gm1vb7",
+      "Integrity": "UuHJu+Gy/feaUsJ5W1p4olXX0Ce2eqs8hOcF60KAmDE=",
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "C:\\попытка sip\\csharp-server\\JanusProxy\\wwwroot\\adapter.js"
+    },
+    {
+      "Identity": "C:\\попытка sip\\csharp-server\\JanusProxy\\obj\\Debug\\net9.0\\compressed\\x1ye737u9p-ntrakmukd2.gz",
+      "SourceId": "JanusProxy",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\попытка sip\\csharp-server\\JanusProxy\\obj\\Debug\\net9.0\\compressed\\",
+      "BasePath": "_content/JanusProxy",
+      "RelativePath": "janus-simple#[.{fingerprint=ntrakmukd2}]?.html.gz",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Alternative",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "C:\\попытка sip\\csharp-server\\JanusProxy\\wwwroot\\janus-simple.html",
+      "AssetTraitName": "Content-Encoding",
+      "AssetTraitValue": "gzip",
+      "Fingerprint": "vcxoou9eyq",
+      "Integrity": "3x7xTdOlyTYXpsAD+w2ZXJ2FY0uge0sIVMo2NrVhB5o=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "C:\\попытка sip\\csharp-server\\JanusProxy\\wwwroot\\janus-simple.html"
     },
     {
       "Identity": "C:\\попытка sip\\csharp-server\\JanusProxy\\wwwroot\\adapter.js",
@@ -73,19 +73,19 @@
       "RelatedAsset": "",
       "AssetTraitName": "",
       "AssetTraitValue": "",
-      "Fingerprint": "1g6fy6y85p",
-      "Integrity": "YSjNHVJFIdk8m3YB7IAGOqULs1vUIJZPpZhME98xtUI=",
+      "Fingerprint": "2ymudiuiu0",
+      "Integrity": "Vhv7tzdAOETTlHZSfJaLDHRtdQQabkAQTzXmvWBy1FQ=",
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\adapter.js"
     },
     {
-      "Identity": "C:\\попытка sip\\csharp-server\\JanusProxy\\wwwroot\\index.html",
+      "Identity": "C:\\попытка sip\\csharp-server\\JanusProxy\\wwwroot\\janus-simple.html",
       "SourceId": "JanusProxy",
       "SourceType": "Discovered",
       "ContentRoot": "C:\\попытка sip\\csharp-server\\JanusProxy\\wwwroot\\",
       "BasePath": "_content/JanusProxy",
-      "RelativePath": "index#[.{fingerprint}]?.html",
+      "RelativePath": "janus-simple#[.{fingerprint}]?.html",
       "AssetKind": "All",
       "AssetMode": "All",
       "AssetRole": "Primary",
@@ -94,22 +94,22 @@
       "RelatedAsset": "",
       "AssetTraitName": "",
       "AssetTraitValue": "",
-      "Fingerprint": "400khl6gpw",
-      "Integrity": "/D3XFzPmJqvzsE0+3/beNbrs15EFfoJ7sNNG/qvQccI=",
+      "Fingerprint": "ntrakmukd2",
+      "Integrity": "pcgnCNn5ZQ62T2eFxkzyaRamSVxoVwJjGHqr1PmIKh0=",
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "wwwroot\\index.html"
+      "OriginalItemSpec": "wwwroot\\janus-simple.html"
     }
   ],
   "Endpoints": [
     {
-      "Route": "adapter.1g6fy6y85p.js",
-      "AssetFile": "C:\\попытка sip\\csharp-server\\JanusProxy\\obj\\Debug\\net9.0\\compressed\\lh38kak3f6-1g6fy6y85p.gz",
+      "Route": "adapter.2ymudiuiu0.js",
+      "AssetFile": "C:\\попытка sip\\csharp-server\\JanusProxy\\obj\\Debug\\net9.0\\compressed\\lh38kak3f6-2ymudiuiu0.gz",
       "Selectors": [
         {
           "Name": "Content-Encoding",
           "Value": "gzip",
-          "Quality": "0.000036451119"
+          "Quality": "0.000036247644"
         }
       ],
       "ResponseHeaders": [
@@ -119,15 +119,15 @@
         },
         {
           "Name": "Content-Length",
-          "Value": "27433"
+          "Value": "27587"
         },
         {
           "Name": "ETag",
-          "Value": "\"+wg+Hc8sf6ypc8j05YrjpXxUnibPM4P8VgCWHzHdGJY=\""
+          "Value": "\"UuHJu+Gy/feaUsJ5W1p4olXX0Ce2eqs8hOcF60KAmDE=\""
         },
         {
           "Name": "Last-Modified",
-          "Value": "Tue, 14 Oct 2025 20:07:01 GMT"
+          "Value": "Wed, 15 Oct 2025 16:05:23 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -147,13 +147,13 @@
         },
         {
           "Name": "ETag",
-          "Value": "W/\"YSjNHVJFIdk8m3YB7IAGOqULs1vUIJZPpZhME98xtUI=\""
+          "Value": "W/\"Vhv7tzdAOETTlHZSfJaLDHRtdQQabkAQTzXmvWBy1FQ=\""
         }
       ],
       "EndpointProperties": [
         {
           "Name": "fingerprint",
-          "Value": "1g6fy6y85p"
+          "Value": "2ymudiuiu0"
         },
         {
           "Name": "label",
@@ -161,12 +161,12 @@
         },
         {
           "Name": "integrity",
-          "Value": "sha256-YSjNHVJFIdk8m3YB7IAGOqULs1vUIJZPpZhME98xtUI="
+          "Value": "sha256-Vhv7tzdAOETTlHZSfJaLDHRtdQQabkAQTzXmvWBy1FQ="
         }
       ]
     },
     {
-      "Route": "adapter.1g6fy6y85p.js",
+      "Route": "adapter.2ymudiuiu0.js",
       "AssetFile": "C:\\попытка sip\\csharp-server\\JanusProxy\\wwwroot\\adapter.js",
       "Selectors": [],
       "ResponseHeaders": [
@@ -176,7 +176,7 @@
         },
         {
           "Name": "Content-Length",
-          "Value": "131596"
+          "Value": "134848"
         },
         {
           "Name": "Content-Type",
@@ -184,11 +184,11 @@
         },
         {
           "Name": "ETag",
-          "Value": "\"YSjNHVJFIdk8m3YB7IAGOqULs1vUIJZPpZhME98xtUI=\""
+          "Value": "\"Vhv7tzdAOETTlHZSfJaLDHRtdQQabkAQTzXmvWBy1FQ=\""
         },
         {
           "Name": "Last-Modified",
-          "Value": "Tue, 14 Oct 2025 20:07:01 GMT"
+          "Value": "Wed, 15 Oct 2025 16:05:23 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -198,7 +198,7 @@
       "EndpointProperties": [
         {
           "Name": "fingerprint",
-          "Value": "1g6fy6y85p"
+          "Value": "2ymudiuiu0"
         },
         {
           "Name": "label",
@@ -206,13 +206,13 @@
         },
         {
           "Name": "integrity",
-          "Value": "sha256-YSjNHVJFIdk8m3YB7IAGOqULs1vUIJZPpZhME98xtUI="
+          "Value": "sha256-Vhv7tzdAOETTlHZSfJaLDHRtdQQabkAQTzXmvWBy1FQ="
         }
       ]
     },
     {
-      "Route": "adapter.1g6fy6y85p.js.gz",
-      "AssetFile": "C:\\попытка sip\\csharp-server\\JanusProxy\\obj\\Debug\\net9.0\\compressed\\lh38kak3f6-1g6fy6y85p.gz",
+      "Route": "adapter.2ymudiuiu0.js.gz",
+      "AssetFile": "C:\\попытка sip\\csharp-server\\JanusProxy\\obj\\Debug\\net9.0\\compressed\\lh38kak3f6-2ymudiuiu0.gz",
       "Selectors": [],
       "ResponseHeaders": [
         {
@@ -221,7 +221,7 @@
         },
         {
           "Name": "Content-Length",
-          "Value": "27433"
+          "Value": "27587"
         },
         {
           "Name": "Content-Type",
@@ -229,11 +229,11 @@
         },
         {
           "Name": "ETag",
-          "Value": "\"+wg+Hc8sf6ypc8j05YrjpXxUnibPM4P8VgCWHzHdGJY=\""
+          "Value": "\"UuHJu+Gy/feaUsJ5W1p4olXX0Ce2eqs8hOcF60KAmDE=\""
         },
         {
           "Name": "Last-Modified",
-          "Value": "Tue, 14 Oct 2025 20:07:01 GMT"
+          "Value": "Wed, 15 Oct 2025 16:05:23 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -251,7 +251,7 @@
       "EndpointProperties": [
         {
           "Name": "fingerprint",
-          "Value": "1g6fy6y85p"
+          "Value": "2ymudiuiu0"
         },
         {
           "Name": "label",
@@ -259,18 +259,18 @@
         },
         {
           "Name": "integrity",
-          "Value": "sha256-+wg+Hc8sf6ypc8j05YrjpXxUnibPM4P8VgCWHzHdGJY="
+          "Value": "sha256-UuHJu+Gy/feaUsJ5W1p4olXX0Ce2eqs8hOcF60KAmDE="
         }
       ]
     },
     {
       "Route": "adapter.js",
-      "AssetFile": "C:\\попытка sip\\csharp-server\\JanusProxy\\obj\\Debug\\net9.0\\compressed\\lh38kak3f6-1g6fy6y85p.gz",
+      "AssetFile": "C:\\попытка sip\\csharp-server\\JanusProxy\\obj\\Debug\\net9.0\\compressed\\lh38kak3f6-2ymudiuiu0.gz",
       "Selectors": [
         {
           "Name": "Content-Encoding",
           "Value": "gzip",
-          "Quality": "0.000036451119"
+          "Quality": "0.000036247644"
         }
       ],
       "ResponseHeaders": [
@@ -280,15 +280,15 @@
         },
         {
           "Name": "Content-Length",
-          "Value": "27433"
+          "Value": "27587"
         },
         {
           "Name": "ETag",
-          "Value": "\"+wg+Hc8sf6ypc8j05YrjpXxUnibPM4P8VgCWHzHdGJY=\""
+          "Value": "\"UuHJu+Gy/feaUsJ5W1p4olXX0Ce2eqs8hOcF60KAmDE=\""
         },
         {
           "Name": "Last-Modified",
-          "Value": "Tue, 14 Oct 2025 20:07:01 GMT"
+          "Value": "Wed, 15 Oct 2025 16:05:23 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -308,13 +308,13 @@
         },
         {
           "Name": "ETag",
-          "Value": "W/\"YSjNHVJFIdk8m3YB7IAGOqULs1vUIJZPpZhME98xtUI=\""
+          "Value": "W/\"Vhv7tzdAOETTlHZSfJaLDHRtdQQabkAQTzXmvWBy1FQ=\""
         }
       ],
       "EndpointProperties": [
         {
           "Name": "integrity",
-          "Value": "sha256-YSjNHVJFIdk8m3YB7IAGOqULs1vUIJZPpZhME98xtUI="
+          "Value": "sha256-Vhv7tzdAOETTlHZSfJaLDHRtdQQabkAQTzXmvWBy1FQ="
         }
       ]
     },
@@ -329,7 +329,7 @@
         },
         {
           "Name": "Content-Length",
-          "Value": "131596"
+          "Value": "134848"
         },
         {
           "Name": "Content-Type",
@@ -337,11 +337,11 @@
         },
         {
           "Name": "ETag",
-          "Value": "\"YSjNHVJFIdk8m3YB7IAGOqULs1vUIJZPpZhME98xtUI=\""
+          "Value": "\"Vhv7tzdAOETTlHZSfJaLDHRtdQQabkAQTzXmvWBy1FQ=\""
         },
         {
           "Name": "Last-Modified",
-          "Value": "Tue, 14 Oct 2025 20:07:01 GMT"
+          "Value": "Wed, 15 Oct 2025 16:05:23 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -351,13 +351,13 @@
       "EndpointProperties": [
         {
           "Name": "integrity",
-          "Value": "sha256-YSjNHVJFIdk8m3YB7IAGOqULs1vUIJZPpZhME98xtUI="
+          "Value": "sha256-Vhv7tzdAOETTlHZSfJaLDHRtdQQabkAQTzXmvWBy1FQ="
         }
       ]
     },
     {
       "Route": "adapter.js.gz",
-      "AssetFile": "C:\\попытка sip\\csharp-server\\JanusProxy\\obj\\Debug\\net9.0\\compressed\\lh38kak3f6-1g6fy6y85p.gz",
+      "AssetFile": "C:\\попытка sip\\csharp-server\\JanusProxy\\obj\\Debug\\net9.0\\compressed\\lh38kak3f6-2ymudiuiu0.gz",
       "Selectors": [],
       "ResponseHeaders": [
         {
@@ -366,7 +366,7 @@
         },
         {
           "Name": "Content-Length",
-          "Value": "27433"
+          "Value": "27587"
         },
         {
           "Name": "Content-Type",
@@ -374,11 +374,11 @@
         },
         {
           "Name": "ETag",
-          "Value": "\"+wg+Hc8sf6ypc8j05YrjpXxUnibPM4P8VgCWHzHdGJY=\""
+          "Value": "\"UuHJu+Gy/feaUsJ5W1p4olXX0Ce2eqs8hOcF60KAmDE=\""
         },
         {
           "Name": "Last-Modified",
-          "Value": "Tue, 14 Oct 2025 20:07:01 GMT"
+          "Value": "Wed, 15 Oct 2025 16:05:23 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -396,18 +396,18 @@
       "EndpointProperties": [
         {
           "Name": "integrity",
-          "Value": "sha256-+wg+Hc8sf6ypc8j05YrjpXxUnibPM4P8VgCWHzHdGJY="
+          "Value": "sha256-UuHJu+Gy/feaUsJ5W1p4olXX0Ce2eqs8hOcF60KAmDE="
         }
       ]
     },
     {
-      "Route": "index.400khl6gpw.html",
-      "AssetFile": "C:\\попытка sip\\csharp-server\\JanusProxy\\obj\\Debug\\net9.0\\compressed\\cyx7fb5tyo-400khl6gpw.gz",
+      "Route": "janus-simple.html",
+      "AssetFile": "C:\\попытка sip\\csharp-server\\JanusProxy\\obj\\Debug\\net9.0\\compressed\\x1ye737u9p-ntrakmukd2.gz",
       "Selectors": [
         {
           "Name": "Content-Encoding",
           "Value": "gzip",
-          "Quality": "0.000210881485"
+          "Quality": "0.000173852573"
         }
       ],
       "ResponseHeaders": [
@@ -417,19 +417,19 @@
         },
         {
           "Name": "Content-Length",
-          "Value": "4741"
+          "Value": "5751"
         },
         {
           "Name": "ETag",
-          "Value": "\"XESnYuXV+Xefh9uJwQfC5airr//WxZX84I+6T8RBFzE=\""
+          "Value": "\"3x7xTdOlyTYXpsAD+w2ZXJ2FY0uge0sIVMo2NrVhB5o=\""
         },
         {
           "Name": "Last-Modified",
-          "Value": "Tue, 14 Oct 2025 20:07:01 GMT"
+          "Value": "Wed, 15 Oct 2025 16:53:18 GMT"
         },
         {
           "Name": "Cache-Control",
-          "Value": "max-age=31536000, immutable"
+          "Value": "no-cache"
         },
         {
           "Name": "Content-Encoding",
@@ -445,27 +445,19 @@
         },
         {
           "Name": "ETag",
-          "Value": "W/\"/D3XFzPmJqvzsE0+3/beNbrs15EFfoJ7sNNG/qvQccI=\""
+          "Value": "W/\"pcgnCNn5ZQ62T2eFxkzyaRamSVxoVwJjGHqr1PmIKh0=\""
         }
       ],
       "EndpointProperties": [
         {
-          "Name": "fingerprint",
-          "Value": "400khl6gpw"
-        },
-        {
-          "Name": "label",
-          "Value": "index.html"
-        },
-        {
           "Name": "integrity",
-          "Value": "sha256-/D3XFzPmJqvzsE0+3/beNbrs15EFfoJ7sNNG/qvQccI="
+          "Value": "sha256-pcgnCNn5ZQ62T2eFxkzyaRamSVxoVwJjGHqr1PmIKh0="
         }
       ]
     },
     {
-      "Route": "index.400khl6gpw.html",
-      "AssetFile": "C:\\попытка sip\\csharp-server\\JanusProxy\\wwwroot\\index.html",
+      "Route": "janus-simple.html",
+      "AssetFile": "C:\\попытка sip\\csharp-server\\JanusProxy\\wwwroot\\janus-simple.html",
       "Selectors": [],
       "ResponseHeaders": [
         {
@@ -474,7 +466,7 @@
         },
         {
           "Name": "Content-Length",
-          "Value": "22408"
+          "Value": "26792"
         },
         {
           "Name": "Content-Type",
@@ -482,35 +474,27 @@
         },
         {
           "Name": "ETag",
-          "Value": "\"/D3XFzPmJqvzsE0+3/beNbrs15EFfoJ7sNNG/qvQccI=\""
+          "Value": "\"pcgnCNn5ZQ62T2eFxkzyaRamSVxoVwJjGHqr1PmIKh0=\""
         },
         {
           "Name": "Last-Modified",
-          "Value": "Tue, 14 Oct 2025 20:07:01 GMT"
+          "Value": "Wed, 15 Oct 2025 16:53:18 GMT"
         },
         {
           "Name": "Cache-Control",
-          "Value": "max-age=31536000, immutable"
+          "Value": "no-cache"
         }
       ],
       "EndpointProperties": [
         {
-          "Name": "fingerprint",
-          "Value": "400khl6gpw"
-        },
-        {
-          "Name": "label",
-          "Value": "index.html"
-        },
-        {
           "Name": "integrity",
-          "Value": "sha256-/D3XFzPmJqvzsE0+3/beNbrs15EFfoJ7sNNG/qvQccI="
+          "Value": "sha256-pcgnCNn5ZQ62T2eFxkzyaRamSVxoVwJjGHqr1PmIKh0="
         }
       ]
     },
     {
-      "Route": "index.400khl6gpw.html.gz",
-      "AssetFile": "C:\\попытка sip\\csharp-server\\JanusProxy\\obj\\Debug\\net9.0\\compressed\\cyx7fb5tyo-400khl6gpw.gz",
+      "Route": "janus-simple.html.gz",
+      "AssetFile": "C:\\попытка sip\\csharp-server\\JanusProxy\\obj\\Debug\\net9.0\\compressed\\x1ye737u9p-ntrakmukd2.gz",
       "Selectors": [],
       "ResponseHeaders": [
         {
@@ -519,7 +503,7 @@
         },
         {
           "Name": "Content-Length",
-          "Value": "4741"
+          "Value": "5751"
         },
         {
           "Name": "Content-Type",
@@ -527,15 +511,15 @@
         },
         {
           "Name": "ETag",
-          "Value": "\"XESnYuXV+Xefh9uJwQfC5airr//WxZX84I+6T8RBFzE=\""
+          "Value": "\"3x7xTdOlyTYXpsAD+w2ZXJ2FY0uge0sIVMo2NrVhB5o=\""
         },
         {
           "Name": "Last-Modified",
-          "Value": "Tue, 14 Oct 2025 20:07:01 GMT"
+          "Value": "Wed, 15 Oct 2025 16:53:18 GMT"
         },
         {
           "Name": "Cache-Control",
-          "Value": "max-age=31536000, immutable"
+          "Value": "no-cache"
         },
         {
           "Name": "Content-Encoding",
@@ -548,27 +532,19 @@
       ],
       "EndpointProperties": [
         {
-          "Name": "fingerprint",
-          "Value": "400khl6gpw"
-        },
-        {
-          "Name": "label",
-          "Value": "index.html.gz"
-        },
-        {
           "Name": "integrity",
-          "Value": "sha256-XESnYuXV+Xefh9uJwQfC5airr//WxZX84I+6T8RBFzE="
+          "Value": "sha256-3x7xTdOlyTYXpsAD+w2ZXJ2FY0uge0sIVMo2NrVhB5o="
         }
       ]
     },
     {
-      "Route": "index.html",
-      "AssetFile": "C:\\попытка sip\\csharp-server\\JanusProxy\\obj\\Debug\\net9.0\\compressed\\cyx7fb5tyo-400khl6gpw.gz",
+      "Route": "janus-simple.ntrakmukd2.html",
+      "AssetFile": "C:\\попытка sip\\csharp-server\\JanusProxy\\obj\\Debug\\net9.0\\compressed\\x1ye737u9p-ntrakmukd2.gz",
       "Selectors": [
         {
           "Name": "Content-Encoding",
           "Value": "gzip",
-          "Quality": "0.000210881485"
+          "Quality": "0.000173852573"
         }
       ],
       "ResponseHeaders": [
@@ -578,19 +554,19 @@
         },
         {
           "Name": "Content-Length",
-          "Value": "4741"
+          "Value": "5751"
         },
         {
           "Name": "ETag",
-          "Value": "\"XESnYuXV+Xefh9uJwQfC5airr//WxZX84I+6T8RBFzE=\""
+          "Value": "\"3x7xTdOlyTYXpsAD+w2ZXJ2FY0uge0sIVMo2NrVhB5o=\""
         },
         {
           "Name": "Last-Modified",
-          "Value": "Tue, 14 Oct 2025 20:07:01 GMT"
+          "Value": "Wed, 15 Oct 2025 16:53:18 GMT"
         },
         {
           "Name": "Cache-Control",
-          "Value": "no-cache"
+          "Value": "max-age=31536000, immutable"
         },
         {
           "Name": "Content-Encoding",
@@ -606,19 +582,27 @@
         },
         {
           "Name": "ETag",
-          "Value": "W/\"/D3XFzPmJqvzsE0+3/beNbrs15EFfoJ7sNNG/qvQccI=\""
+          "Value": "W/\"pcgnCNn5ZQ62T2eFxkzyaRamSVxoVwJjGHqr1PmIKh0=\""
         }
       ],
       "EndpointProperties": [
         {
+          "Name": "fingerprint",
+          "Value": "ntrakmukd2"
+        },
+        {
+          "Name": "label",
+          "Value": "janus-simple.html"
+        },
+        {
           "Name": "integrity",
-          "Value": "sha256-/D3XFzPmJqvzsE0+3/beNbrs15EFfoJ7sNNG/qvQccI="
+          "Value": "sha256-pcgnCNn5ZQ62T2eFxkzyaRamSVxoVwJjGHqr1PmIKh0="
         }
       ]
     },
     {
-      "Route": "index.html",
-      "AssetFile": "C:\\попытка sip\\csharp-server\\JanusProxy\\wwwroot\\index.html",
+      "Route": "janus-simple.ntrakmukd2.html",
+      "AssetFile": "C:\\попытка sip\\csharp-server\\JanusProxy\\wwwroot\\janus-simple.html",
       "Selectors": [],
       "ResponseHeaders": [
         {
@@ -627,7 +611,7 @@
         },
         {
           "Name": "Content-Length",
-          "Value": "22408"
+          "Value": "26792"
         },
         {
           "Name": "Content-Type",
@@ -635,27 +619,35 @@
         },
         {
           "Name": "ETag",
-          "Value": "\"/D3XFzPmJqvzsE0+3/beNbrs15EFfoJ7sNNG/qvQccI=\""
+          "Value": "\"pcgnCNn5ZQ62T2eFxkzyaRamSVxoVwJjGHqr1PmIKh0=\""
         },
         {
           "Name": "Last-Modified",
-          "Value": "Tue, 14 Oct 2025 20:07:01 GMT"
+          "Value": "Wed, 15 Oct 2025 16:53:18 GMT"
         },
         {
           "Name": "Cache-Control",
-          "Value": "no-cache"
+          "Value": "max-age=31536000, immutable"
         }
       ],
       "EndpointProperties": [
         {
+          "Name": "fingerprint",
+          "Value": "ntrakmukd2"
+        },
+        {
+          "Name": "label",
+          "Value": "janus-simple.html"
+        },
+        {
           "Name": "integrity",
-          "Value": "sha256-/D3XFzPmJqvzsE0+3/beNbrs15EFfoJ7sNNG/qvQccI="
+          "Value": "sha256-pcgnCNn5ZQ62T2eFxkzyaRamSVxoVwJjGHqr1PmIKh0="
         }
       ]
     },
     {
-      "Route": "index.html.gz",
-      "AssetFile": "C:\\попытка sip\\csharp-server\\JanusProxy\\obj\\Debug\\net9.0\\compressed\\cyx7fb5tyo-400khl6gpw.gz",
+      "Route": "janus-simple.ntrakmukd2.html.gz",
+      "AssetFile": "C:\\попытка sip\\csharp-server\\JanusProxy\\obj\\Debug\\net9.0\\compressed\\x1ye737u9p-ntrakmukd2.gz",
       "Selectors": [],
       "ResponseHeaders": [
         {
@@ -664,7 +656,7 @@
         },
         {
           "Name": "Content-Length",
-          "Value": "4741"
+          "Value": "5751"
         },
         {
           "Name": "Content-Type",
@@ -672,15 +664,15 @@
         },
         {
           "Name": "ETag",
-          "Value": "\"XESnYuXV+Xefh9uJwQfC5airr//WxZX84I+6T8RBFzE=\""
+          "Value": "\"3x7xTdOlyTYXpsAD+w2ZXJ2FY0uge0sIVMo2NrVhB5o=\""
         },
         {
           "Name": "Last-Modified",
-          "Value": "Tue, 14 Oct 2025 20:07:01 GMT"
+          "Value": "Wed, 15 Oct 2025 16:53:18 GMT"
         },
         {
           "Name": "Cache-Control",
-          "Value": "no-cache"
+          "Value": "max-age=31536000, immutable"
         },
         {
           "Name": "Content-Encoding",
@@ -693,8 +685,16 @@
       ],
       "EndpointProperties": [
         {
+          "Name": "fingerprint",
+          "Value": "ntrakmukd2"
+        },
+        {
+          "Name": "label",
+          "Value": "janus-simple.html.gz"
+        },
+        {
           "Name": "integrity",
-          "Value": "sha256-XESnYuXV+Xefh9uJwQfC5airr//WxZX84I+6T8RBFzE="
+          "Value": "sha256-3x7xTdOlyTYXpsAD+w2ZXJ2FY0uge0sIVMo2NrVhB5o="
         }
       ]
     }

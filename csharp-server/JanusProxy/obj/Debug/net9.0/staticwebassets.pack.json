@@ -5,8 +5,8 @@
       "PackagePath": "staticwebassets\\adapter.js"
     },
     {
-      "Id": "C:\\попытка sip\\csharp-server\\JanusProxy\\wwwroot\\index.html",
-      "PackagePath": "staticwebassets\\index.html"
+      "Id": "C:\\попытка sip\\csharp-server\\JanusProxy\\wwwroot\\janus-simple.html",
+      "PackagePath": "staticwebassets\\janus-simple.html"
     },
     {
       "Id": "obj\\Debug\\net9.0\\staticwebassets\\msbuild.JanusProxy.Microsoft.AspNetCore.StaticWebAssetEndpoints.props",

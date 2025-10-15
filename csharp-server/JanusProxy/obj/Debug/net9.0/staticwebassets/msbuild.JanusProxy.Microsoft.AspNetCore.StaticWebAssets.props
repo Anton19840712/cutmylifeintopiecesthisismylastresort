@@ -12,29 +12,29 @@
       <RelatedAsset></RelatedAsset>
       <AssetTraitName></AssetTraitName>
       <AssetTraitValue></AssetTraitValue>
-      <Fingerprint>1g6fy6y85p</Fingerprint>
-      <Integrity>YSjNHVJFIdk8m3YB7IAGOqULs1vUIJZPpZhME98xtUI=</Integrity>
+      <Fingerprint>2ymudiuiu0</Fingerprint>
+      <Integrity>Vhv7tzdAOETTlHZSfJaLDHRtdQQabkAQTzXmvWBy1FQ=</Integrity>
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
       <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\adapter.js'))</OriginalItemSpec>
     </StaticWebAsset>
-    <StaticWebAsset Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\index.html'))">
+    <StaticWebAsset Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\janus-simple.html'))">
       <SourceType>Package</SourceType>
       <SourceId>JanusProxy</SourceId>
       <ContentRoot>$(MSBuildThisFileDirectory)..\staticwebassets\</ContentRoot>
       <BasePath>_content/JanusProxy</BasePath>
-      <RelativePath>index.html</RelativePath>
+      <RelativePath>janus-simple.html</RelativePath>
       <AssetKind>All</AssetKind>
       <AssetMode>All</AssetMode>
       <AssetRole>Primary</AssetRole>
       <RelatedAsset></RelatedAsset>
       <AssetTraitName></AssetTraitName>
       <AssetTraitValue></AssetTraitValue>
-      <Fingerprint>400khl6gpw</Fingerprint>
-      <Integrity>/D3XFzPmJqvzsE0+3/beNbrs15EFfoJ7sNNG/qvQccI=</Integrity>
+      <Fingerprint>ntrakmukd2</Fingerprint>
+      <Integrity>pcgnCNn5ZQ62T2eFxkzyaRamSVxoVwJjGHqr1PmIKh0=</Integrity>
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-      <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\index.html'))</OriginalItemSpec>
+      <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\janus-simple.html'))</OriginalItemSpec>
     </StaticWebAsset>
   </ItemGroup>
 </Project>

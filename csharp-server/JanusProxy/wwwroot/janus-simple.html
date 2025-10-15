@@ -5,54 +5,102 @@
     <title>Janus SIP Client - Direct API</title>
     <script src="adapter.js"></script>
     <style>
-        body { font-family: monospace; padding: 20px; background: #1a1a1a; color: #0f0; }
-        .container { max-width: 900px; margin: 0 auto; }
-        h1 { color: #0f0; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+            color: #333;
+        }
+        .container { max-width: 800px; margin: 0 auto; }
+        h1 { color: #333; font-size: 24px; margin-bottom: 20px; font-weight: 500; }
+
         button {
             padding: 10px 20px;
-            margin: 5px;
-            background: #0a0;
-            color: #000;
-            border: none;
+            margin: 5px 5px 5px 0;
+            background: #fff;
+            color: #333;
+            border: 1px solid #ddd;
+            border-radius: 4px;
             cursor: pointer;
-            font-family: monospace;
-            font-weight: bold;
+            font-size: 14px;
+            transition: all 0.2s;
         }
-        button:hover { background: #0f0; }
-        button:disabled { background: #333; color: #666; cursor: not-allowed; }
+        button:hover { background: #f9f9f9; border-color: #999; }
+        button:disabled { background: #f0f0f0; color: #999; cursor: not-allowed; border-color: #e5e5e5; }
+
+        input[type="text"], input[type="password"] {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            background: #fff;
+            color: #333;
+        }
+        input[type="text"]:focus, input[type="password"]:focus { outline: none; border-color: #999; }
+
+        label { font-size: 14px; color: #666; margin-right: 8px; }
+
         #log {
-            background: #000;
-            border: 1px solid #0f0;
-            padding: 10px;
-            height: 500px;
-            overflow-y: scroll;
-            margin-top: 10px;
-            font-size: 12px;
+            display: none;
         }
-        .success { color: #0f0; }
-        .error { color: #f00; }
-        .info { color: #0ff; }
-        .warn { color: #ff0; }
+
+        .section { margin-bottom: 15px; padding: 15px; background: #fff; border: 1px solid #ddd; border-radius: 4px; }
+
+        @keyframes blink {
+            0%, 100% { border-color: #28a745; }
+            50% { border-color: #5cb85c; }
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Janus WebRTC Gateway - SIP Client (Direct API)</h1>
-        <p>Anton (anton-test) → Janus Gateway → sip.linphone.org → Roman (romaous)</p>
+        <h1>SIP Client</h1>
 
-        <div>
-            <button id="connectBtn" onclick="connectToJanus()">1. Подключиться к Janus</button>
-            <button id="attachBtn" onclick="attachPlugin()" disabled>2. Подключить SIP плагин</button>
-            <button id="registerBtn" onclick="registerSIP()" disabled>3. Зарегистрироваться на SIP</button>
-            <button id="callBtn" onclick="makeCall()" disabled>4. Позвонить Роману</button>
-            <button id="hangupBtn" onclick="hangup()" disabled>Завершить</button>
+        <div class="section">
+            <h3 style="margin-bottom: 15px; font-size: 16px; font-weight: 500;">Учетная запись SIP</h3>
+            <div style="display: grid; grid-template-columns: 120px 1fr; gap: 10px; align-items: center;">
+                <label>SIP Server:</label>
+                <input type="text" id="sipServer" placeholder="sip.linphone.org">
+
+                <label>Username:</label>
+                <input type="text" id="sipUsername" placeholder="anton-test">
+
+                <label>Domain:</label>
+                <input type="text" id="sipDomain" placeholder="sip.linphone.org">
+
+                <label>Password:</label>
+                <div style="display: flex; gap: 5px;">
+                    <input type="password" id="sipPassword" placeholder="••••••••" style="flex: 1;">
+                    <button type="button" onclick="togglePassword()" style="padding: 8px 12px; margin: 0; min-width: 40px;">👁</button>
+                </div>
+
+                <label>Display Name:</label>
+                <input type="text" id="sipDisplayName" placeholder="Anton Test">
+            </div>
         </div>
 
-        <div id="incomingCallPanel" style="display: none; margin-top: 20px; padding: 15px; background: #004400; border: 2px solid #0f0;">
-            <div style="font-size: 18px; margin-bottom: 10px;">📞 ВХОДЯЩИЙ ЗВОНОК</div>
-            <div id="callerInfo" style="margin-bottom: 10px;">От: ...</div>
-            <button onclick="acceptCall()" style="background: #0f0; color: #000; font-size: 16px; padding: 10px 30px;">✓ ПРИНЯТЬ</button>
-            <button onclick="rejectCall()" style="background: #f00; color: #fff; font-size: 16px; padding: 10px 30px; margin-left: 10px;">✗ ОТКЛОНИТЬ</button>
+        <div class="section">
+            <h3 style="margin-bottom: 15px; font-size: 16px; font-weight: 500;">Звонок</h3>
+            <div style="display: grid; grid-template-columns: 120px 1fr; gap: 10px; align-items: center;">
+                <label for="callUsername">Кому звонить:</label>
+                <input type="text" id="callUsername" placeholder="romaous">
+            </div>
+            <div style="margin-top: 15px;">
+                <button id="callBtn" onclick="makeCall()">Позвонить</button>
+                <button id="hangupBtn" onclick="hangup()" disabled>Завершить</button>
+            </div>
+        </div>
+
+        <div id="incomingCallPanel" style="display: none; margin-bottom: 15px; padding: 20px; background: #fff; border: 2px solid #28a745; border-radius: 4px; animation: blink 1s infinite;">
+            <div style="font-size: 20px; margin-bottom: 10px; font-weight: 500; color: #333;">📞 Входящий звонок</div>
+            <div id="callerInfo" style="margin-bottom: 15px; font-size: 16px; color: #666;">От: ...</div>
+            <button onclick="acceptCall()" style="background: #28a745; color: #fff; border-color: #28a745; font-size: 14px; padding: 10px 25px;">Принять</button>
+            <button onclick="rejectCall()" style="background: #dc3545; color: #fff; border-color: #dc3545; font-size: 14px; padding: 10px 25px;">Отклонить</button>
+        </div>
+
+        <div id="callStatusPanel" style="display: none; margin-bottom: 15px; padding: 12px; background: #fff; border: 1px solid #ddd; border-radius: 4px;">
+            <div id="callStatus" style="color: #666; font-size: 14px;">Статус: ...</div>
         </div>
 
         <audio id="remoteAudio" autoplay></audio>
@@ -60,11 +108,22 @@
     </div>
 
     <script>
-        const JANUS_URL = '/janus';
-        const SIP_SERVER = 'sip:sip.linphone.org';
-        const USERNAME = 'anton-test';
-        const PASSWORD = 'Ant6729@$%#';
-        const DESTINATION = 'sip:romaous@sip.linphone.org';
+        // Конфигурация загружается с сервера
+        let CONFIG = null;
+        let JANUS_URL = '/janus';
+        let SIP_SERVER = 'sip:sip.linphone.org';
+        let USERNAME = 'anton-test';
+        let PASSWORD = 'Ant6729@$%#';
+        let DESTINATION = 'sip:romaous@sip.linphone.org';
+        let HANGUP_DELAY = 2000;
+        let STUN_SERVERS = ['stun:stun.l.google.com:19302'];
+        let OPUS_CONFIG = {
+            minPtime: 10,
+            useInbandFec: true,
+            maxAverageBitrate: 64000,
+            stereo: false,
+            cbr: true
+        };
 
         let sessionId = null;
         let handleId = null;
@@ -72,6 +131,42 @@
         let localStream = null;
         let incomingOffer = null;  // Сохраняем offer входящего звонка
         let incomingCaller = null; // Сохраняем информацию о звонящем
+        let isRegistered = false;  // Флаг успешной регистрации
+
+        // Загружаем конфигурацию с сервера
+        async function loadConfig() {
+            try {
+                const response = await fetch('/api/config');
+                CONFIG = await response.json();
+
+                // Применяем конфигурацию
+                JANUS_URL = CONFIG.janus.url;
+                SIP_SERVER = CONFIG.sip.server;
+                USERNAME = CONFIG.sip.username;
+                PASSWORD = CONFIG.sip.password;
+                DESTINATION = CONFIG.sip.destinationUri;
+                HANGUP_DELAY = CONFIG.sip.hangupDelay;
+                STUN_SERVERS = CONFIG.webrtc.stunServers;
+                OPUS_CONFIG = CONFIG.webrtc.opusCodec;
+
+                log('✓ Конфигурация загружена с сервера', 'success');
+                log(`SIP: ${USERNAME} → ${DESTINATION}`, 'info');
+
+                // Автозаполняем поля формы из конфига
+                document.getElementById('sipServer').value = CONFIG.sip.server.replace('sip:', '');
+                document.getElementById('sipUsername').value = CONFIG.sip.username;
+                document.getElementById('sipDomain').value = CONFIG.sip.proxy.replace('sip:', '').split(':')[0];
+                document.getElementById('sipPassword').value = CONFIG.sip.password;
+                document.getElementById('sipDisplayName').value = CONFIG.sip.displayName;
+
+                // Автозаполняем поле "Кому звонить"
+                const destUsername = CONFIG.sip.destinationUri.replace('sip:', '').split('@')[0];
+                document.getElementById('callUsername').value = destUsername;
+            } catch (error) {
+                log('⚠ Ошибка загрузки конфигурации, используем значения по умолчанию', 'warn');
+                console.error(error);
+            }
+        }
 
         function log(message, type = 'info') {
             const logDiv = document.getElementById('log');
@@ -80,6 +175,18 @@
             logDiv.innerHTML += `<div class="${className}">[${timestamp}] ${message}</div>`;
             logDiv.scrollTop = logDiv.scrollHeight;
             console.log(`[${type}] ${message}`);
+        }
+
+        function updateCallStatus(status) {
+            const statusPanel = document.getElementById('callStatusPanel');
+            const statusDiv = document.getElementById('callStatus');
+
+            if (status) {
+                statusDiv.textContent = status;
+                statusPanel.style.display = 'block';
+            } else {
+                statusPanel.style.display = 'none';
+            }
         }
 
         async function janusRequest(endpoint, payload = {}) {
@@ -105,7 +212,6 @@
 
         async function connectToJanus() {
             log('=== Подключение к Janus Gateway ===', 'success');
-            document.getElementById('connectBtn').disabled = true;
 
             try {
                 const response = await janusRequest('', { janus: 'create', transaction: randomString() });
@@ -113,7 +219,6 @@
                 if (response.janus === 'success') {
                     sessionId = response.data.id;
                     log(`✓ Создана сессия: ${sessionId}`, 'success');
-                    document.getElementById('attachBtn').disabled = false;
 
                     // Start keepalive
                     setInterval(() => {
@@ -123,16 +228,16 @@
                     }, 30000);
                 } else {
                     log(`✗ Ошибка создания сессии: ${response.error}`, 'error');
+                    throw new Error(response.error);
                 }
             } catch (error) {
                 log(`✗ Ошибка подключения: ${error}`, 'error');
-                document.getElementById('connectBtn').disabled = false;
+                throw error;
             }
         }
 
         async function attachPlugin() {
             log('=== Подключение к SIP плагину ===', 'success');
-            document.getElementById('attachBtn').disabled = true;
 
             try {
                 const response = await janusRequest(`/${sessionId}`, {
@@ -144,43 +249,57 @@
                 if (response.janus === 'success') {
                     handleId = response.data.id;
                     log(`✓ SIP плагин подключен: ${handleId}`, 'success');
-                    document.getElementById('registerBtn').disabled = false;
                 } else {
                     log(`✗ Ошибка подключения плагина: ${response.error}`, 'error');
-                    document.getElementById('attachBtn').disabled = false;
+                    throw new Error(response.error);
                 }
             } catch (error) {
                 log(`✗ Ошибка: ${error}`, 'error');
-                document.getElementById('attachBtn').disabled = false;
+                throw error;
             }
         }
 
         async function registerSIP() {
             log('=== Регистрация на SIP сервере ===', 'success');
-            document.getElementById('registerBtn').disabled = true;
 
             try {
+                // Получаем данные из формы
+                const server = document.getElementById('sipServer').value || 'sip.linphone.org';
+                const username = document.getElementById('sipUsername').value || 'user';
+                const domain = document.getElementById('sipDomain').value || 'sip.linphone.org';
+                const password = document.getElementById('sipPassword').value || '';
+                const displayName = document.getElementById('sipDisplayName').value || 'SIP User';
+
+                // Склеиваем данные в нужный формат
+                const sipUsername = `sip:${username}@${domain}`;
+                const sipProxy = `sip:${server}:5060`;
+
+                log(`Регистрация: ${username}@${domain}`, 'info');
+
                 const response = await janusRequest(`/${sessionId}/${handleId}`, {
                     janus: 'message',
                     transaction: randomString(),
                     body: {
                         request: 'register',
-                        username: `sip:${USERNAME}@sip.linphone.org`,
-                        secret: PASSWORD,
-                        authuser: USERNAME,
-                        display_name: 'Anton Test',
-                        proxy: 'sip:sip.linphone.org:5060'
+                        username: sipUsername,
+                        secret: password,
+                        authuser: username,
+                        display_name: displayName,
+                        proxy: sipProxy
                     }
                 });
 
                 log(`Response: ${JSON.stringify(response)}`, 'info');
 
-                // Polling for events
-                pollEvents();
+                // Polling for events (запускаем только один раз)
+                if (!window.pollingStarted) {
+                    window.pollingStarted = true;
+                    pollEvents();
+                }
 
             } catch (error) {
                 log(`✗ Ошибка регистрации: ${error}`, 'error');
-                document.getElementById('registerBtn').disabled = false;
+                throw error;
             }
         }
 
@@ -211,7 +330,6 @@
                         // Проверяем на ошибки
                         if (sipData.error_code) {
                             log(`✗ SIP Error ${sipData.error_code}: ${sipData.error}`, 'error');
-                            document.getElementById('registerBtn').disabled = false;
                             return;
                         }
 
@@ -222,25 +340,40 @@
 
                             if (event === 'registered') {
                                 log('✓✓✓ SIP РЕГИСТРАЦИЯ УСПЕШНА!', 'success');
-                                document.getElementById('callBtn').disabled = false;
+                                isRegistered = true;
                                 // НЕ прекращаем polling - нужны события звонка!
                             } else if (event === 'registration_failed') {
                                 log('✗ Регистрация не удалась: ' + (result.reason || 'unknown'), 'error');
-                                document.getElementById('registerBtn').disabled = false;
                                 return;
                             } else if (event === 'incomingcall') {
-                                log('📞📞📞 ВХОДЯЩИЙ ЗВОНОК от ' + result.username, 'success');
+                                // Извлекаем имя абонента из SIP URI
+                                const callerUri = result.username || 'Неизвестный';
+                                const callerName = callerUri.replace('sip:', '').split('@')[0];
+
+                                log('📞📞📞 ВХОДЯЩИЙ ЗВОНОК от ' + callerUri, 'success');
+
                                 // Показываем панель для принятия звонка
                                 incomingOffer = data.jsep;
-                                incomingCaller = result.username || 'Неизвестный';
-                                document.getElementById('callerInfo').textContent = 'От: ' + incomingCaller;
+                                incomingCaller = callerUri;
+
+                                // Форматируем отображение звонящего
+                                const callerDisplay = `
+                                    <div style="font-weight: bold; font-size: 22px; color: #0ff; margin-bottom: 5px;">${callerName}</div>
+                                    <div style="font-size: 14px; color: #0a0;">${callerUri}</div>
+                                `;
+                                document.getElementById('callerInfo').innerHTML = callerDisplay;
                                 document.getElementById('incomingCallPanel').style.display = 'block';
+
                                 // Воспроизводим звук звонка (опционально)
                                 // const audio = new Audio('data:audio/wav;base64,...'); audio.play();
                             } else if (event === 'calling') {
                                 log('📞 Звоним...', 'warn');
+                                updateCallStatus('📞 Звоним...');
                             } else if (event === 'accepted') {
                                 log('✓ Звонок принят!', 'success');
+                                // Обновляем статус с именем абонента
+                                const callUsername = document.getElementById('callUsername').value || 'user';
+                                updateCallStatus(`✓ Разговор с: ${callUsername}`);
                             } else if (event === 'hangup') {
                                 log('Звонок завершен', 'info');
                                 if (pc) {
@@ -252,15 +385,10 @@
                                     localStream = null;
                                 }
                                 document.getElementById('hangupBtn').disabled = true;
+                                document.getElementById('callBtn').disabled = false;
                                 document.getElementById('incomingCallPanel').style.display = 'none';
-
-                                // Задержка 2 секунды перед разрешением нового звонка
-                                // чтобы Janus SIP плагин успел перейти из состояния "closing" в "idle"
-                                log('⏳ Ожидание завершения сессии SIP (2 сек)...', 'warn');
-                                setTimeout(() => {
-                                    document.getElementById('callBtn').disabled = false;
-                                    log('✓ Готов принимать входящие звонки', 'success');
-                                }, 2000);
+                                updateCallStatus('');
+                                log('✓ Готов для нового звонка', 'success');
                             }
                         }
                     }
@@ -281,9 +409,56 @@
         async function makeCall() {
             log('=== Начинаем звонок ===', 'success');
             document.getElementById('callBtn').disabled = true;
-            document.getElementById('hangupBtn').disabled = false;
 
             try {
+                // Шаг 1: Подключаемся к Janus, если еще не подключены
+                if (!sessionId) {
+                    log('Подключение к Janus Gateway...', 'info');
+                    await connectToJanus();
+                    if (!sessionId) {
+                        throw new Error('Не удалось подключиться к Janus');
+                    }
+                }
+
+                // Шаг 2: Подключаем SIP плагин, если еще не подключен
+                if (!handleId) {
+                    log('Подключение SIP плагина...', 'info');
+                    await attachPlugin();
+                    if (!handleId) {
+                        throw new Error('Не удалось подключить SIP плагин');
+                    }
+                }
+
+                // Шаг 3: Регистрируемся на SIP сервере (если еще не зарегистрированы)
+                if (!isRegistered) {
+                    log('Регистрация на SIP сервере...', 'info');
+                    await registerSIP();
+
+                    // Ждем события 'registered'
+                    log('⏳ Ожидание подтверждения регистрации...', 'info');
+                    const maxWait = 10000; // Максимум 10 секунд
+                    const startTime = Date.now();
+                    while (!isRegistered && (Date.now() - startTime) < maxWait) {
+                        await new Promise(resolve => setTimeout(resolve, 100));
+                    }
+
+                    if (!isRegistered) {
+                        throw new Error('Время ожидания регистрации истекло');
+                    }
+                    log('✓ Регистрация подтверждена', 'success');
+                }
+
+                // Шаг 4: Теперь звоним
+                document.getElementById('hangupBtn').disabled = false;
+
+                // Получаем данные для звонка
+                const callUsername = document.getElementById('callUsername').value || 'user';
+                const domain = document.getElementById('sipDomain').value || 'sip.linphone.org';
+
+                // Склеиваем адрес назначения
+                const callDestination = `sip:${callUsername}@${domain}`;
+                log(`📞 Звоним на: ${callDestination}`, 'info');
+                updateCallStatus(`📞 Звоним: ${callUsername}...`);
                 // Очищаем предыдущее соединение перед новым звонком
                 if (pc) {
                     log('⚠ Закрываем предыдущее PeerConnection', 'warn');
@@ -302,9 +477,7 @@
 
                 // Create PeerConnection
                 pc = new RTCPeerConnection({
-                    iceServers: [
-                        { urls: 'stun:stun.l.google.com:19302' }
-                    ]
+                    iceServers: STUN_SERVERS.map(url => ({ urls: url }))
                 });
 
                 // Add local stream
@@ -348,13 +521,15 @@
                 });
 
                 // Модифицируем SDP для улучшения качества Opus
+                const opusFmtp = `a=fmtp:111 minptime=${OPUS_CONFIG.minPtime};useinbandfec=${OPUS_CONFIG.useInbandFec ? 1 : 0};maxaveragebitrate=${OPUS_CONFIG.maxAverageBitrate};stereo=${OPUS_CONFIG.stereo ? 1 : 0};sprop-stereo=${OPUS_CONFIG.stereo ? 1 : 0};cbr=${OPUS_CONFIG.cbr ? 1 : 0}`;
                 offer.sdp = offer.sdp.replace(
-                    /a=fmtp:111 minptime=10;useinbandfec=1/g,
-                    'a=fmtp:111 minptime=10;useinbandfec=1;maxaveragebitrate=64000;stereo=0;sprop-stereo=0;cbr=1'
+                    /a=fmtp:111 minptime=\d+;useinbandfec=[01]/g,
+                    opusFmtp
                 );
 
                 await pc.setLocalDescription(offer);
                 log('✓ Offer создан с улучшенными параметрами Opus', 'success');
+                console.log('📤 Offer SDP:', offer.sdp);
 
                 // Send INVITE
                 const response = await janusRequest(`/${sessionId}/${handleId}`, {
@@ -362,7 +537,7 @@
                     transaction: randomString(),
                     body: {
                         request: 'call',
-                        uri: DESTINATION
+                        uri: callDestination
                     },
                     jsep: {
                         type: 'offer',
@@ -381,10 +556,15 @@
 
         async function acceptIncomingCall(offer) {
             log('=== Принимаем входящий звонок ===', 'success');
-            document.getElementById('callBtn').disabled = true;
-            document.getElementById('hangupBtn').disabled = false;
 
             try {
+                // Обновляем кнопки
+                document.getElementById('callBtn').disabled = true;
+                document.getElementById('hangupBtn').disabled = false;
+
+                // Обновляем статус
+                const callerName = incomingCaller ? incomingCaller.replace('sip:', '').split('@')[0] : 'Неизвестный';
+                updateCallStatus(`✓ Разговор с: ${callerName}`);
                 // Очищаем предыдущее соединение перед приёмом звонка
                 if (pc) {
                     log('⚠ Закрываем предыдущее PeerConnection', 'warn');
@@ -397,15 +577,14 @@
                     localStream = null;
                 }
 
+
                 // Get media
                 localStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
                 log('✓ Микрофон получен', 'success');
 
                 // Create PeerConnection
                 pc = new RTCPeerConnection({
-                    iceServers: [
-                        { urls: 'stun:stun.l.google.com:19302' }
-                    ]
+                    iceServers: STUN_SERVERS.map(url => ({ urls: url }))
                 });
 
                 // Add local stream
@@ -447,14 +626,16 @@
                 // Create answer
                 const answer = await pc.createAnswer();
 
-                // Улучшаем параметры Opus в answer
+                // Улучшаем параметры Opus в answer (используем конфиг)
+                const answerOpusFmtp = `a=fmtp:111 minptime=${OPUS_CONFIG.minPtime};useinbandfec=${OPUS_CONFIG.useInbandFec ? 1 : 0};maxaveragebitrate=${OPUS_CONFIG.maxAverageBitrate};stereo=${OPUS_CONFIG.stereo ? 1 : 0};sprop-stereo=${OPUS_CONFIG.stereo ? 1 : 0};cbr=${OPUS_CONFIG.cbr ? 1 : 0}`;
                 answer.sdp = answer.sdp.replace(
-                    /a=fmtp:111 minptime=10;useinbandfec=1/g,
-                    'a=fmtp:111 minptime=10;useinbandfec=1;maxaveragebitrate=64000;stereo=0;sprop-stereo=0;cbr=1'
+                    /a=fmtp:111 minptime=\d+;useinbandfec=[01]/g,
+                    answerOpusFmtp
                 );
 
                 await pc.setLocalDescription(answer);
                 log('✓ Answer создан', 'success');
+                console.log('📤 Answer SDP:', answer.sdp);
 
                 // Send ACCEPT with answer
                 const response = await janusRequest(`/${sessionId}/${handleId}`, {
@@ -497,8 +678,10 @@
                 body: { request: 'hangup' }
             });
 
-            // НЕ разблокируем кнопку здесь - это сделает обработчик события 'hangup' с задержкой 2 сек
             document.getElementById('hangupBtn').disabled = true;
+            document.getElementById('callBtn').disabled = false;
+            updateCallStatus('');
+            log('✓ Готов для нового звонка', 'success');
         }
 
         async function acceptCall() {
@@ -533,7 +716,21 @@
             return Math.random().toString(36).substring(2, 15);
         }
 
-        log('Страница загружена. Нажмите "Подключиться к Janus"', 'success');
+        function togglePassword() {
+            const passwordField = document.getElementById('sipPassword');
+            if (passwordField.type === 'password') {
+                passwordField.type = 'text';
+            } else {
+                passwordField.type = 'password';
+            }
+        }
+
+        // Инициализация приложения
+        (async function init() {
+            log('Страница загружена. Загружаем конфигурацию...', 'success');
+            await loadConfig();
+            log('✓ Готово! Нажмите "Позвонить" для звонка', 'success');
+        })();
     </script>
 </body>
 </html>

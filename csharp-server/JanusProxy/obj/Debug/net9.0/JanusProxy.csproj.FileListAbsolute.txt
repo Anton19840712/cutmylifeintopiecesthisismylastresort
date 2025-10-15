@@ -14,8 +14,6 @@ C:\попытка sip\csharp-server\JanusProxy\obj\Debug\net9.0\JanusProxy.cspro
 C:\попытка sip\csharp-server\JanusProxy\obj\Debug\net9.0\JanusProxy.MvcApplicationPartsAssemblyInfo.cache
 C:\попытка sip\csharp-server\JanusProxy\obj\Debug\net9.0\JanusProxy.sourcelink.json
 C:\попытка sip\csharp-server\JanusProxy\obj\Debug\net9.0\scopedcss\bundle\JanusProxy.styles.css
-C:\попытка sip\csharp-server\JanusProxy\obj\Debug\net9.0\compressed\lh38kak3f6-1g6fy6y85p.gz
-C:\попытка sip\csharp-server\JanusProxy\obj\Debug\net9.0\compressed\cyx7fb5tyo-400khl6gpw.gz
 C:\попытка sip\csharp-server\JanusProxy\obj\Debug\net9.0\staticwebassets.build.json
 C:\попытка sip\csharp-server\JanusProxy\obj\Debug\net9.0\staticwebassets.development.json
 C:\попытка sip\csharp-server\JanusProxy\obj\Debug\net9.0\staticwebassets.build.endpoints.json
@@ -30,3 +28,6 @@ C:\попытка sip\csharp-server\JanusProxy\obj\Debug\net9.0\refint\JanusProx
 C:\попытка sip\csharp-server\JanusProxy\obj\Debug\net9.0\JanusProxy.pdb
 C:\попытка sip\csharp-server\JanusProxy\obj\Debug\net9.0\JanusProxy.genruntimeconfig.cache
 C:\попытка sip\csharp-server\JanusProxy\obj\Debug\net9.0\ref\JanusProxy.dll
+C:\попытка sip\csharp-server\JanusProxy\bin\Debug\net9.0\appsettings.Production.json
+C:\попытка sip\csharp-server\JanusProxy\obj\Debug\net9.0\compressed\lh38kak3f6-2ymudiuiu0.gz
+C:\попытка sip\csharp-server\JanusProxy\obj\Debug\net9.0\compressed\x1ye737u9p-ntrakmukd2.gz
