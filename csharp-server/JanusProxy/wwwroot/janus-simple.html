@@ -251,11 +251,16 @@
                                     localStream.getTracks().forEach(track => track.stop());
                                     localStream = null;
                                 }
-                                document.getElementById('callBtn').disabled = false;
                                 document.getElementById('hangupBtn').disabled = true;
                                 document.getElementById('incomingCallPanel').style.display = 'none';
-                                // Продолжаем polling для входящих звонков
-                                log('✓ Готов принимать входящие звонки', 'success');
+
+                                // Задержка 2 секунды перед разрешением нового звонка
+                                // чтобы Janus SIP плагин успел перейти из состояния "closing" в "idle"
+                                log('⏳ Ожидание завершения сессии SIP (2 сек)...', 'warn');
+                                setTimeout(() => {
+                                    document.getElementById('callBtn').disabled = false;
+                                    log('✓ Готов принимать входящие звонки', 'success');
+                                }, 2000);
                             }
                         }
                     }
@@ -492,7 +497,7 @@
                 body: { request: 'hangup' }
             });
 
-            document.getElementById('callBtn').disabled = false;
+            // НЕ разблокируем кнопку здесь - это сделает обработчик события 'hangup' с задержкой 2 сек
             document.getElementById('hangupBtn').disabled = true;
         }
 
