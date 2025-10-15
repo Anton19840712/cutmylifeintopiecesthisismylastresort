@@ -18,5 +18,8 @@ Thumbs.db
 # IDE
 .vscode/
 .idea/
+.vs/
 *.swp
 *.swo
+*.user
+*.suo

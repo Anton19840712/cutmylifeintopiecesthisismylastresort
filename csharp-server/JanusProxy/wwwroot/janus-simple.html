@@ -254,7 +254,8 @@
                                 document.getElementById('callBtn').disabled = false;
                                 document.getElementById('hangupBtn').disabled = true;
                                 document.getElementById('incomingCallPanel').style.display = 'none';
-                                return;
+                                // Продолжаем polling для входящих звонков
+                                log('✓ Готов принимать входящие звонки', 'success');
                             }
                         }
                     }
@@ -278,6 +279,18 @@
             document.getElementById('hangupBtn').disabled = false;
 
             try {
+                // Очищаем предыдущее соединение перед новым звонком
+                if (pc) {
+                    log('⚠ Закрываем предыдущее PeerConnection', 'warn');
+                    pc.close();
+                    pc = null;
+                }
+                if (localStream) {
+                    log('⚠ Останавливаем предыдущий stream', 'warn');
+                    localStream.getTracks().forEach(track => track.stop());
+                    localStream = null;
+                }
+
                 // Get media
                 localStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
                 log('✓ Микрофон получен', 'success');
@@ -367,6 +380,18 @@
             document.getElementById('hangupBtn').disabled = false;
 
             try {
+                // Очищаем предыдущее соединение перед приёмом звонка
+                if (pc) {
+                    log('⚠ Закрываем предыдущее PeerConnection', 'warn');
+                    pc.close();
+                    pc = null;
+                }
+                if (localStream) {
+                    log('⚠ Останавливаем предыдущий stream', 'warn');
+                    localStream.getTracks().forEach(track => track.stop());
+                    localStream = null;
+                }
+
                 // Get media
                 localStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
                 log('✓ Микрофон получен', 'success');
