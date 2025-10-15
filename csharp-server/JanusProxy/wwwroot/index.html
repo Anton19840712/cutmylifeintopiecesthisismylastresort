@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Janus SIP Client - Direct API</title>
+    <script src="adapter.js"></script>
+    <style>
+        body { font-family: monospace; padding: 20px; background: #1a1a1a; color: #0f0; }
+        .container { max-width: 900px; margin: 0 auto; }
+        h1 { color: #0f0; }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            background: #0a0;
+            color: #000;
+            border: none;
+            cursor: pointer;
+            font-family: monospace;
+            font-weight: bold;
+        }
+        button:hover { background: #0f0; }
+        button:disabled { background: #333; color: #666; cursor: not-allowed; }
+        #log {
+            background: #000;
+            border: 1px solid #0f0;
+            padding: 10px;
+            height: 500px;
+            overflow-y: scroll;
+            margin-top: 10px;
+            font-size: 12px;
+        }
+        .success { color: #0f0; }
+        .error { color: #f00; }
+        .info { color: #0ff; }
+        .warn { color: #ff0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Janus WebRTC Gateway - SIP Client (Direct API)</h1>
+        <p>Anton (anton-test) → Janus Gateway → sip.linphone.org → Roman (romaous)</p>
+
+        <div>
+            <button id="connectBtn" onclick="connectToJanus()">1. Подключиться к Janus</button>
+            <button id="attachBtn" onclick="attachPlugin()" disabled>2. Подключить SIP плагин</button>
+            <button id="registerBtn" onclick="registerSIP()" disabled>3. Зарегистрироваться на SIP</button>
+            <button id="callBtn" onclick="makeCall()" disabled>4. Позвонить Роману</button>
+            <button id="hangupBtn" onclick="hangup()" disabled>Завершить</button>
+        </div>
+
+        <div id="incomingCallPanel" style="display: none; margin-top: 20px; padding: 15px; background: #004400; border: 2px solid #0f0;">
+            <div style="font-size: 18px; margin-bottom: 10px;">📞 ВХОДЯЩИЙ ЗВОНОК</div>
+            <div id="callerInfo" style="margin-bottom: 10px;">От: ...</div>
+            <button onclick="acceptCall()" style="background: #0f0; color: #000; font-size: 16px; padding: 10px 30px;">✓ ПРИНЯТЬ</button>
+            <button onclick="rejectCall()" style="background: #f00; color: #fff; font-size: 16px; padding: 10px 30px; margin-left: 10px;">✗ ОТКЛОНИТЬ</button>
+        </div>
+
+        <audio id="remoteAudio" autoplay></audio>
+        <div id="log"></div>
+    </div>
+
+    <script>
+        const JANUS_URL = '/janus';
+        const SIP_SERVER = 'sip:sip.linphone.org';
+        const USERNAME = 'anton-test';
+        const PASSWORD = 'Ant6729@$%#';
+        const DESTINATION = 'sip:romaous@sip.linphone.org';
+
+        let sessionId = null;
+        let handleId = null;
+        let pc = null;
+        let localStream = null;
+        let incomingOffer = null;  // Сохраняем offer входящего звонка
+        let incomingCaller = null; // Сохраняем информацию о звонящем
+
+        function log(message, type = 'info') {
+            const logDiv = document.getElementById('log');
+            const timestamp = new Date().toISOString().substr(11, 12);
+            const className = type;
+            logDiv.innerHTML += `<div class="${className}">[${timestamp}] ${message}</div>`;
+            logDiv.scrollTop = logDiv.scrollHeight;
+            console.log(`[${type}] ${message}`);
+        }
+
+        async function janusRequest(endpoint, payload = {}) {
+            const url = endpoint.startsWith('http') ? endpoint : `${JANUS_URL}${endpoint}`;
+            log(`→ POST ${url}`, 'info');
+            log(`Payload: ${JSON.stringify(payload)}`, 'info');
+
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await response.json();
+                log(`← Response: ${JSON.stringify(data)}`, 'info');
+                return data;
+            } catch (error) {
+                log(`✗ Request failed: ${error}`, 'error');
+                throw error;
+            }
+        }
+
+        async function connectToJanus() {
+            log('=== Подключение к Janus Gateway ===', 'success');
+            document.getElementById('connectBtn').disabled = true;
+
+            try {
+                const response = await janusRequest('', { janus: 'create', transaction: randomString() });
+
+                if (response.janus === 'success') {
+                    sessionId = response.data.id;
+                    log(`✓ Создана сессия: ${sessionId}`, 'success');
+                    document.getElementById('attachBtn').disabled = false;
+
+                    // Start keepalive
+                    setInterval(() => {
+                        if (sessionId) {
+                            janusRequest(`/${sessionId}`, { janus: 'keepalive', transaction: randomString() });
+                        }
+                    }, 30000);
+                } else {
+                    log(`✗ Ошибка создания сессии: ${response.error}`, 'error');
+                }
+            } catch (error) {
+                log(`✗ Ошибка подключения: ${error}`, 'error');
+                document.getElementById('connectBtn').disabled = false;
+            }
+        }
+
+        async function attachPlugin() {
+            log('=== Подключение к SIP плагину ===', 'success');
+            document.getElementById('attachBtn').disabled = true;
+
+            try {
+                const response = await janusRequest(`/${sessionId}`, {
+                    janus: 'attach',
+                    plugin: 'janus.plugin.sip',
+                    transaction: randomString()
+                });
+
+                if (response.janus === 'success') {
+                    handleId = response.data.id;
+                    log(`✓ SIP плагин подключен: ${handleId}`, 'success');
+                    document.getElementById('registerBtn').disabled = false;
+                } else {
+                    log(`✗ Ошибка подключения плагина: ${response.error}`, 'error');
+                    document.getElementById('attachBtn').disabled = false;
+                }
+            } catch (error) {
+                log(`✗ Ошибка: ${error}`, 'error');
+                document.getElementById('attachBtn').disabled = false;
+            }
+        }
+
+        async function registerSIP() {
+            log('=== Регистрация на SIP сервере ===', 'success');
+            document.getElementById('registerBtn').disabled = true;
+
+            try {
+                const response = await janusRequest(`/${sessionId}/${handleId}`, {
+                    janus: 'message',
+                    transaction: randomString(),
+                    body: {
+                        request: 'register',
+                        username: `sip:${USERNAME}@sip.linphone.org`,
+                        secret: PASSWORD,
+                        authuser: USERNAME,
+                        display_name: 'Anton Test',
+                        proxy: 'sip:sip.linphone.org:5060'
+                    }
+                });
+
+                log(`Response: ${JSON.stringify(response)}`, 'info');
+
+                // Polling for events
+                pollEvents();
+
+            } catch (error) {
+                log(`✗ Ошибка регистрации: ${error}`, 'error');
+                document.getElementById('registerBtn').disabled = false;
+            }
+        }
+
+        async function pollEvents() {
+            if (!sessionId || !handleId) return;
+
+            try {
+                // Long polling для событий - используем GET-подобный запрос через fetch
+                const response = await fetch(`/janus/${sessionId}?maxev=1&rid=${Date.now()}`, {
+                    method: 'GET'
+                });
+
+                const data = await response.json();
+                log(`📡 Poll response: ${JSON.stringify(data)}`, 'info');
+
+                if (data.janus === 'event') {
+                    // Обработка JSEP answer для WebRTC
+                    if (data.jsep && pc) {
+                        log('✓ Получен SDP answer от Janus', 'success');
+                        await pc.setRemoteDescription(new RTCSessionDescription(data.jsep));
+                        log('✓ Remote SDP установлен', 'success');
+                    }
+
+                    const plugindata = data.plugindata;
+                    if (plugindata && plugindata.data) {
+                        const sipData = plugindata.data;
+
+                        // Проверяем на ошибки
+                        if (sipData.error_code) {
+                            log(`✗ SIP Error ${sipData.error_code}: ${sipData.error}`, 'error');
+                            document.getElementById('registerBtn').disabled = false;
+                            return;
+                        }
+
+                        const result = sipData.result;
+                        if (result && result.event) {
+                            const event = result.event;
+                            log(`📡 Event: ${event}`, 'warn');
+
+                            if (event === 'registered') {
+                                log('✓✓✓ SIP РЕГИСТРАЦИЯ УСПЕШНА!', 'success');
+                                document.getElementById('callBtn').disabled = false;
+                                // НЕ прекращаем polling - нужны события звонка!
+                            } else if (event === 'registration_failed') {
+                                log('✗ Регистрация не удалась: ' + (result.reason || 'unknown'), 'error');
+                                document.getElementById('registerBtn').disabled = false;
+                                return;
+                            } else if (event === 'incomingcall') {
+                                log('📞📞📞 ВХОДЯЩИЙ ЗВОНОК от ' + result.username, 'success');
+                                // Показываем панель для принятия звонка
+                                incomingOffer = data.jsep;
+                                incomingCaller = result.username || 'Неизвестный';
+                                document.getElementById('callerInfo').textContent = 'От: ' + incomingCaller;
+                                document.getElementById('incomingCallPanel').style.display = 'block';
+                                // Воспроизводим звук звонка (опционально)
+                                // const audio = new Audio('data:audio/wav;base64,...'); audio.play();
+                            } else if (event === 'calling') {
+                                log('📞 Звоним...', 'warn');
+                            } else if (event === 'accepted') {
+                                log('✓ Звонок принят!', 'success');
+                            } else if (event === 'hangup') {
+                                log('Звонок завершен', 'info');
+                                if (pc) {
+                                    pc.close();
+                                    pc = null;
+                                }
+                                if (localStream) {
+                                    localStream.getTracks().forEach(track => track.stop());
+                                    localStream = null;
+                                }
+                                document.getElementById('callBtn').disabled = false;
+                                document.getElementById('hangupBtn').disabled = true;
+                                document.getElementById('incomingCallPanel').style.display = 'none';
+                                return;
+                            }
+                        }
+                    }
+                }
+
+                // Continue polling during call
+                if (sessionId) {
+                    setTimeout(pollEvents, 1000);
+                }
+            } catch (error) {
+                log(`Poll error: ${error}`, 'error');
+                if (sessionId) {
+                    setTimeout(pollEvents, 2000);
+                }
+            }
+        }
+
+        async function makeCall() {
+            log('=== Начинаем звонок ===', 'success');
+            document.getElementById('callBtn').disabled = true;
+            document.getElementById('hangupBtn').disabled = false;
+
+            try {
+                // Get media
+                localStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+                log('✓ Микрофон получен', 'success');
+
+                // Create PeerConnection
+                pc = new RTCPeerConnection({
+                    iceServers: [
+                        { urls: 'stun:stun.l.google.com:19302' }
+                    ]
+                });
+
+                // Add local stream
+                localStream.getTracks().forEach(track => pc.addTrack(track, localStream));
+
+                // Handle remote stream
+                pc.ontrack = (event) => {
+                    log('✓ Получен удалённый аудио поток', 'success');
+                    document.getElementById('remoteAudio').srcObject = event.streams[0];
+                };
+
+                // Handle ICE candidates
+                pc.onicecandidate = async (event) => {
+                    if (event.candidate) {
+                        log(`🧊 ICE candidate: ${event.candidate.candidate.substring(0, 50)}...`, 'info');
+                        // Отправляем trickle candidate в Janus
+                        try {
+                            await janusRequest(`/${sessionId}/${handleId}`, {
+                                janus: 'trickle',
+                                transaction: randomString(),
+                                candidate: event.candidate
+                            });
+                        } catch (e) {
+                            log(`Trickle ICE error: ${e}`, 'warn');
+                        }
+                    } else {
+                        // All ICE candidates sent
+                        log('✓ Все ICE candidates отправлены', 'info');
+                        await janusRequest(`/${sessionId}/${handleId}`, {
+                            janus: 'trickle',
+                            transaction: randomString(),
+                            candidate: { completed: true }
+                        });
+                    }
+                };
+
+                // Create offer
+                const offer = await pc.createOffer({
+                    offerToReceiveAudio: true,
+                    voiceActivityDetection: false  // Отключаем VAD для лучшего качества
+                });
+
+                // Модифицируем SDP для улучшения качества Opus
+                offer.sdp = offer.sdp.replace(
+                    /a=fmtp:111 minptime=10;useinbandfec=1/g,
+                    'a=fmtp:111 minptime=10;useinbandfec=1;maxaveragebitrate=64000;stereo=0;sprop-stereo=0;cbr=1'
+                );
+
+                await pc.setLocalDescription(offer);
+                log('✓ Offer создан с улучшенными параметрами Opus', 'success');
+
+                // Send INVITE
+                const response = await janusRequest(`/${sessionId}/${handleId}`, {
+                    janus: 'message',
+                    transaction: randomString(),
+                    body: {
+                        request: 'call',
+                        uri: DESTINATION
+                    },
+                    jsep: {
+                        type: 'offer',
+                        sdp: offer.sdp
+                    }
+                });
+
+                log(`INVITE отправлен: ${JSON.stringify(response)}`, 'success');
+
+            } catch (error) {
+                log(`✗ Ошибка звонка: ${error}`, 'error');
+                document.getElementById('callBtn').disabled = false;
+                document.getElementById('hangupBtn').disabled = true;
+            }
+        }
+
+        async function acceptIncomingCall(offer) {
+            log('=== Принимаем входящий звонок ===', 'success');
+            document.getElementById('callBtn').disabled = true;
+            document.getElementById('hangupBtn').disabled = false;
+
+            try {
+                // Get media
+                localStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+                log('✓ Микрофон получен', 'success');
+
+                // Create PeerConnection
+                pc = new RTCPeerConnection({
+                    iceServers: [
+                        { urls: 'stun:stun.l.google.com:19302' }
+                    ]
+                });
+
+                // Add local stream
+                localStream.getTracks().forEach(track => pc.addTrack(track, localStream));
+
+                // Handle remote stream
+                pc.ontrack = (event) => {
+                    log('✓ Получен удалённый аудио поток', 'success');
+                    document.getElementById('remoteAudio').srcObject = event.streams[0];
+                };
+
+                // Handle ICE candidates
+                pc.onicecandidate = async (event) => {
+                    if (event.candidate) {
+                        log(`🧊 ICE candidate: ${event.candidate.candidate.substring(0, 50)}...`, 'info');
+                        try {
+                            await janusRequest(`/${sessionId}/${handleId}`, {
+                                janus: 'trickle',
+                                transaction: randomString(),
+                                candidate: event.candidate
+                            });
+                        } catch (e) {
+                            log(`Trickle ICE error: ${e}`, 'warn');
+                        }
+                    } else {
+                        log('✓ Все ICE candidates отправлены', 'info');
+                        await janusRequest(`/${sessionId}/${handleId}`, {
+                            janus: 'trickle',
+                            transaction: randomString(),
+                            candidate: { completed: true }
+                        });
+                    }
+                };
+
+                // Set remote description from offer
+                await pc.setRemoteDescription(new RTCSessionDescription(offer));
+                log('✓ Remote Offer установлен', 'success');
+
+                // Create answer
+                const answer = await pc.createAnswer();
+
+                // Улучшаем параметры Opus в answer
+                answer.sdp = answer.sdp.replace(
+                    /a=fmtp:111 minptime=10;useinbandfec=1/g,
+                    'a=fmtp:111 minptime=10;useinbandfec=1;maxaveragebitrate=64000;stereo=0;sprop-stereo=0;cbr=1'
+                );
+
+                await pc.setLocalDescription(answer);
+                log('✓ Answer создан', 'success');
+
+                // Send ACCEPT with answer
+                const response = await janusRequest(`/${sessionId}/${handleId}`, {
+                    janus: 'message',
+                    transaction: randomString(),
+                    body: {
+                        request: 'accept'
+                    },
+                    jsep: {
+                        type: 'answer',
+                        sdp: answer.sdp
+                    }
+                });
+
+                log(`✓ Звонок принят: ${JSON.stringify(response)}`, 'success');
+
+            } catch (error) {
+                log(`✗ Ошибка принятия звонка: ${error}`, 'error');
+                document.getElementById('callBtn').disabled = false;
+                document.getElementById('hangupBtn').disabled = true;
+            }
+        }
+
+        async function hangup() {
+            log('Завершение звонка...', 'info');
+
+            if (pc) {
+                pc.close();
+                pc = null;
+            }
+
+            if (localStream) {
+                localStream.getTracks().forEach(track => track.stop());
+                localStream = null;
+            }
+
+            await janusRequest(`/${sessionId}/${handleId}`, {
+                janus: 'message',
+                transaction: randomString(),
+                body: { request: 'hangup' }
+            });
+
+            document.getElementById('callBtn').disabled = false;
+            document.getElementById('hangupBtn').disabled = true;
+        }
+
+        async function acceptCall() {
+            log('✓ Принимаем звонок...', 'success');
+            document.getElementById('incomingCallPanel').style.display = 'none';
+
+            if (incomingOffer) {
+                await acceptIncomingCall(incomingOffer);
+                incomingOffer = null;
+                incomingCaller = null;
+            }
+        }
+
+        async function rejectCall() {
+            log('✗ Звонок отклонен', 'warn');
+            document.getElementById('incomingCallPanel').style.display = 'none';
+
+            if (incomingOffer) {
+                // Отправляем decline в Janus
+                await janusRequest(`/${sessionId}/${handleId}`, {
+                    janus: 'message',
+                    transaction: randomString(),
+                    body: { request: 'decline' }
+                });
+
+                incomingOffer = null;
+                incomingCaller = null;
+            }
+        }
+
+        function randomString() {
+            return Math.random().toString(36).substring(2, 15);
+        }
+
+        log('Страница загружена. Нажмите "Подключиться к Janus"', 'success');
+    </script>
+</body>
+</html>

@@ -1,0 +1,702 @@
+{
+  "Version": 1,
+  "Hash": "sZv1lVvcCvYfO+U2421gDXSWxLaKsQlQcN5rh7hxWdg=",
+  "Source": "JanusProxy",
+  "BasePath": "_content/JanusProxy",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [
+    {
+      "Name": "JanusProxy\\wwwroot",
+      "Source": "JanusProxy",
+      "ContentRoot": "C:\\попытка sip\\csharp-server\\JanusProxy\\wwwroot\\",
+      "BasePath": "_content/JanusProxy",
+      "Pattern": "**"
+    }
+  ],
+  "Assets": [
+    {
+      "Identity": "C:\\попытка sip\\csharp-server\\JanusProxy\\obj\\Debug\\net9.0\\compressed\\cyx7fb5tyo-400khl6gpw.gz",
+      "SourceId": "JanusProxy",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\попытка sip\\csharp-server\\JanusProxy\\obj\\Debug\\net9.0\\compressed\\",
+      "BasePath": "_content/JanusProxy",
+      "RelativePath": "index#[.{fingerprint=400khl6gpw}]?.html.gz",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Alternative",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "C:\\попытка sip\\csharp-server\\JanusProxy\\wwwroot\\index.html",
+      "AssetTraitName": "Content-Encoding",
+      "AssetTraitValue": "gzip",
+      "Fingerprint": "k8bvh4jow8",
+      "Integrity": "XESnYuXV+Xefh9uJwQfC5airr//WxZX84I+6T8RBFzE=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "C:\\попытка sip\\csharp-server\\JanusProxy\\wwwroot\\index.html"
+    },
+    {
+      "Identity": "C:\\попытка sip\\csharp-server\\JanusProxy\\obj\\Debug\\net9.0\\compressed\\lh38kak3f6-1g6fy6y85p.gz",
+      "SourceId": "JanusProxy",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\попытка sip\\csharp-server\\JanusProxy\\obj\\Debug\\net9.0\\compressed\\",
+      "BasePath": "_content/JanusProxy",
+      "RelativePath": "adapter#[.{fingerprint=1g6fy6y85p}]?.js.gz",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Alternative",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "C:\\попытка sip\\csharp-server\\JanusProxy\\wwwroot\\adapter.js",
+      "AssetTraitName": "Content-Encoding",
+      "AssetTraitValue": "gzip",
+      "Fingerprint": "9b3ddyvnn8",
+      "Integrity": "+wg+Hc8sf6ypc8j05YrjpXxUnibPM4P8VgCWHzHdGJY=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "C:\\попытка sip\\csharp-server\\JanusProxy\\wwwroot\\adapter.js"
+    },
+    {
+      "Identity": "C:\\попытка sip\\csharp-server\\JanusProxy\\wwwroot\\adapter.js",
+      "SourceId": "JanusProxy",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\попытка sip\\csharp-server\\JanusProxy\\wwwroot\\",
+      "BasePath": "_content/JanusProxy",
+      "RelativePath": "adapter#[.{fingerprint}]?.js",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "1g6fy6y85p",
+      "Integrity": "YSjNHVJFIdk8m3YB7IAGOqULs1vUIJZPpZhME98xtUI=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\adapter.js"
+    },
+    {
+      "Identity": "C:\\попытка sip\\csharp-server\\JanusProxy\\wwwroot\\index.html",
+      "SourceId": "JanusProxy",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\попытка sip\\csharp-server\\JanusProxy\\wwwroot\\",
+      "BasePath": "_content/JanusProxy",
+      "RelativePath": "index#[.{fingerprint}]?.html",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "400khl6gpw",
+      "Integrity": "/D3XFzPmJqvzsE0+3/beNbrs15EFfoJ7sNNG/qvQccI=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\index.html"
+    }
+  ],
+  "Endpoints": [
+    {
+      "Route": "adapter.1g6fy6y85p.js",
+      "AssetFile": "C:\\попытка sip\\csharp-server\\JanusProxy\\obj\\Debug\\net9.0\\compressed\\lh38kak3f6-1g6fy6y85p.gz",
+      "Selectors": [
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip",
+          "Quality": "0.000036451119"
+        }
+      ],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "27433"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"+wg+Hc8sf6ypc8j05YrjpXxUnibPM4P8VgCWHzHdGJY=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Tue, 14 Oct 2025 20:07:01 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        },
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip"
+        },
+        {
+          "Name": "Vary",
+          "Value": "Content-Encoding"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/javascript"
+        },
+        {
+          "Name": "ETag",
+          "Value": "W/\"YSjNHVJFIdk8m3YB7IAGOqULs1vUIJZPpZhME98xtUI=\""
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "1g6fy6y85p"
+        },
+        {
+          "Name": "label",
+          "Value": "adapter.js"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-YSjNHVJFIdk8m3YB7IAGOqULs1vUIJZPpZhME98xtUI="
+        }
+      ]
+    },
+    {
+      "Route": "adapter.1g6fy6y85p.js",
+      "AssetFile": "C:\\попытка sip\\csharp-server\\JanusProxy\\wwwroot\\adapter.js",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "131596"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/javascript"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"YSjNHVJFIdk8m3YB7IAGOqULs1vUIJZPpZhME98xtUI=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Tue, 14 Oct 2025 20:07:01 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "1g6fy6y85p"
+        },
+        {
+          "Name": "label",
+          "Value": "adapter.js"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-YSjNHVJFIdk8m3YB7IAGOqULs1vUIJZPpZhME98xtUI="
+        }
+      ]
+    },
+    {
+      "Route": "adapter.1g6fy6y85p.js.gz",
+      "AssetFile": "C:\\попытка sip\\csharp-server\\JanusProxy\\obj\\Debug\\net9.0\\compressed\\lh38kak3f6-1g6fy6y85p.gz",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "27433"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/javascript"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"+wg+Hc8sf6ypc8j05YrjpXxUnibPM4P8VgCWHzHdGJY=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Tue, 14 Oct 2025 20:07:01 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        },
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip"
+        },
+        {
+          "Name": "Vary",
+          "Value": "Content-Encoding"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "1g6fy6y85p"
+        },
+        {
+          "Name": "label",
+          "Value": "adapter.js.gz"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-+wg+Hc8sf6ypc8j05YrjpXxUnibPM4P8VgCWHzHdGJY="
+        }
+      ]
+    },
+    {
+      "Route": "adapter.js",
+      "AssetFile": "C:\\попытка sip\\csharp-server\\JanusProxy\\obj\\Debug\\net9.0\\compressed\\lh38kak3f6-1g6fy6y85p.gz",
+      "Selectors": [
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip",
+          "Quality": "0.000036451119"
+        }
+      ],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "27433"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"+wg+Hc8sf6ypc8j05YrjpXxUnibPM4P8VgCWHzHdGJY=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Tue, 14 Oct 2025 20:07:01 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        },
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip"
+        },
+        {
+          "Name": "Vary",
+          "Value": "Content-Encoding"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/javascript"
+        },
+        {
+          "Name": "ETag",
+          "Value": "W/\"YSjNHVJFIdk8m3YB7IAGOqULs1vUIJZPpZhME98xtUI=\""
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-YSjNHVJFIdk8m3YB7IAGOqULs1vUIJZPpZhME98xtUI="
+        }
+      ]
+    },
+    {
+      "Route": "adapter.js",
+      "AssetFile": "C:\\попытка sip\\csharp-server\\JanusProxy\\wwwroot\\adapter.js",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "131596"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/javascript"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"YSjNHVJFIdk8m3YB7IAGOqULs1vUIJZPpZhME98xtUI=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Tue, 14 Oct 2025 20:07:01 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-YSjNHVJFIdk8m3YB7IAGOqULs1vUIJZPpZhME98xtUI="
+        }
+      ]
+    },
+    {
+      "Route": "adapter.js.gz",
+      "AssetFile": "C:\\попытка sip\\csharp-server\\JanusProxy\\obj\\Debug\\net9.0\\compressed\\lh38kak3f6-1g6fy6y85p.gz",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "27433"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/javascript"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"+wg+Hc8sf6ypc8j05YrjpXxUnibPM4P8VgCWHzHdGJY=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Tue, 14 Oct 2025 20:07:01 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        },
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip"
+        },
+        {
+          "Name": "Vary",
+          "Value": "Content-Encoding"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-+wg+Hc8sf6ypc8j05YrjpXxUnibPM4P8VgCWHzHdGJY="
+        }
+      ]
+    },
+    {
+      "Route": "index.400khl6gpw.html",
+      "AssetFile": "C:\\попытка sip\\csharp-server\\JanusProxy\\obj\\Debug\\net9.0\\compressed\\cyx7fb5tyo-400khl6gpw.gz",
+      "Selectors": [
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip",
+          "Quality": "0.000210881485"
+        }
+      ],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "4741"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"XESnYuXV+Xefh9uJwQfC5airr//WxZX84I+6T8RBFzE=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Tue, 14 Oct 2025 20:07:01 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        },
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip"
+        },
+        {
+          "Name": "Vary",
+          "Value": "Content-Encoding"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/html"
+        },
+        {
+          "Name": "ETag",
+          "Value": "W/\"/D3XFzPmJqvzsE0+3/beNbrs15EFfoJ7sNNG/qvQccI=\""
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "400khl6gpw"
+        },
+        {
+          "Name": "label",
+          "Value": "index.html"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-/D3XFzPmJqvzsE0+3/beNbrs15EFfoJ7sNNG/qvQccI="
+        }
+      ]
+    },
+    {
+      "Route": "index.400khl6gpw.html",
+      "AssetFile": "C:\\попытка sip\\csharp-server\\JanusProxy\\wwwroot\\index.html",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "22408"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/html"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"/D3XFzPmJqvzsE0+3/beNbrs15EFfoJ7sNNG/qvQccI=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Tue, 14 Oct 2025 20:07:01 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "400khl6gpw"
+        },
+        {
+          "Name": "label",
+          "Value": "index.html"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-/D3XFzPmJqvzsE0+3/beNbrs15EFfoJ7sNNG/qvQccI="
+        }
+      ]
+    },
+    {
+      "Route": "index.400khl6gpw.html.gz",
+      "AssetFile": "C:\\попытка sip\\csharp-server\\JanusProxy\\obj\\Debug\\net9.0\\compressed\\cyx7fb5tyo-400khl6gpw.gz",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "4741"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/html"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"XESnYuXV+Xefh9uJwQfC5airr//WxZX84I+6T8RBFzE=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Tue, 14 Oct 2025 20:07:01 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        },
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip"
+        },
+        {
+          "Name": "Vary",
+          "Value": "Content-Encoding"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "400khl6gpw"
+        },
+        {
+          "Name": "label",
+          "Value": "index.html.gz"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-XESnYuXV+Xefh9uJwQfC5airr//WxZX84I+6T8RBFzE="
+        }
+      ]
+    },
+    {
+      "Route": "index.html",
+      "AssetFile": "C:\\попытка sip\\csharp-server\\JanusProxy\\obj\\Debug\\net9.0\\compressed\\cyx7fb5tyo-400khl6gpw.gz",
+      "Selectors": [
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip",
+          "Quality": "0.000210881485"
+        }
+      ],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "4741"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"XESnYuXV+Xefh9uJwQfC5airr//WxZX84I+6T8RBFzE=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Tue, 14 Oct 2025 20:07:01 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        },
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip"
+        },
+        {
+          "Name": "Vary",
+          "Value": "Content-Encoding"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/html"
+        },
+        {
+          "Name": "ETag",
+          "Value": "W/\"/D3XFzPmJqvzsE0+3/beNbrs15EFfoJ7sNNG/qvQccI=\""
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-/D3XFzPmJqvzsE0+3/beNbrs15EFfoJ7sNNG/qvQccI="
+        }
+      ]
+    },
+    {
+      "Route": "index.html",
+      "AssetFile": "C:\\попытка sip\\csharp-server\\JanusProxy\\wwwroot\\index.html",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "22408"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/html"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"/D3XFzPmJqvzsE0+3/beNbrs15EFfoJ7sNNG/qvQccI=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Tue, 14 Oct 2025 20:07:01 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-/D3XFzPmJqvzsE0+3/beNbrs15EFfoJ7sNNG/qvQccI="
+        }
+      ]
+    },
+    {
+      "Route": "index.html.gz",
+      "AssetFile": "C:\\попытка sip\\csharp-server\\JanusProxy\\obj\\Debug\\net9.0\\compressed\\cyx7fb5tyo-400khl6gpw.gz",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "4741"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/html"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"XESnYuXV+Xefh9uJwQfC5airr//WxZX84I+6T8RBFzE=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Tue, 14 Oct 2025 20:07:01 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        },
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip"
+        },
+        {
+          "Name": "Vary",
+          "Value": "Content-Encoding"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-XESnYuXV+Xefh9uJwQfC5airr//WxZX84I+6T8RBFzE="
+        }
+      ]
+    }
+  ]
+}
