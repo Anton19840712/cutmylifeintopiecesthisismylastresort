@@ -83,8 +83,9 @@
         <div class="section">
             <h3 style="margin-bottom: 15px; font-size: 16px; font-weight: 500;">Статус</h3>
             <div id="registrationStatus" style="padding: 10px; background: #f0f0f0; border-radius: 4px; color: #666; margin-bottom: 15px;">
-                ⏳ Инициализация...
+                ⏳ Не подключен
             </div>
+            <button id="registerBtn" onclick="startRegistration()" style="background: #28a745; color: #fff; border-color: #28a745;">Зарегистрироваться</button>
         </div>
 
         <div class="section">
@@ -368,7 +369,14 @@
                                 log('✓✓✓ SIP РЕГИСТРАЦИЯ УСПЕШНА!', 'success');
                                 isRegistered = true;
                                 updateRegistrationStatus('✓ Зарегистрирован - готов принимать звонки', 'success');
-                                document.getElementById('callBtn').disabled = false;
+
+                                // Включаем кнопку "Позвонить" и делаем её зелёной
+                                const callBtn = document.getElementById('callBtn');
+                                callBtn.disabled = false;
+                                callBtn.style.background = '#28a745';
+                                callBtn.style.color = '#fff';
+                                callBtn.style.borderColor = '#28a745';
+
                                 // НЕ прекращаем polling - нужны события звонка!
                             } else if (event === 'registration_failed') {
                                 log('✗ Регистрация не удалась: ' + (result.reason || 'unknown'), 'error');
@@ -414,7 +422,14 @@
                                     localStream = null;
                                 }
                                 document.getElementById('hangupBtn').disabled = true;
-                                document.getElementById('callBtn').disabled = false;
+
+                                // Возвращаем кнопку "Позвонить" зелёной
+                                const callBtn = document.getElementById('callBtn');
+                                callBtn.disabled = false;
+                                callBtn.style.background = '#28a745';
+                                callBtn.style.color = '#fff';
+                                callBtn.style.borderColor = '#28a745';
+
                                 document.getElementById('incomingCallPanel').style.display = 'none';
                                 updateCallStatus('');
                                 log('✓ Готов для нового звонка', 'success');
@@ -437,7 +452,13 @@
 
         async function makeCall() {
             log('=== Начинаем звонок ===', 'success');
-            document.getElementById('callBtn').disabled = true;
+
+            // Блокируем и возвращаем стандартный стиль кнопке
+            const callBtn = document.getElementById('callBtn');
+            callBtn.disabled = true;
+            callBtn.style.background = '';
+            callBtn.style.color = '';
+            callBtn.style.borderColor = '';
 
             try {
                 // Проверяем, что мы зарегистрированы
@@ -551,7 +572,14 @@
 
             } catch (error) {
                 log(`✗ Ошибка звонка: ${error}`, 'error');
-                document.getElementById('callBtn').disabled = false;
+
+                // Возвращаем кнопку "Позвонить" зелёной
+                const callBtn = document.getElementById('callBtn');
+                callBtn.disabled = false;
+                callBtn.style.background = '#28a745';
+                callBtn.style.color = '#fff';
+                callBtn.style.borderColor = '#28a745';
+
                 document.getElementById('hangupBtn').disabled = true;
             }
         }
@@ -686,7 +714,14 @@
             });
 
             document.getElementById('hangupBtn').disabled = true;
-            document.getElementById('callBtn').disabled = false;
+
+            // Возвращаем кнопку "Позвонить" зелёной
+            const callBtn = document.getElementById('callBtn');
+            callBtn.disabled = false;
+            callBtn.style.background = '#28a745';
+            callBtn.style.color = '#fff';
+            callBtn.style.borderColor = '#28a745';
+
             updateCallStatus('');
             log('✓ Готов для нового звонка', 'success');
         }
@@ -732,17 +767,13 @@
             }
         }
 
-        // Инициализация приложения
-        (async function init() {
+        // Функция для начала регистрации (вызывается по кнопке)
+        async function startRegistration() {
             try {
-                log('Страница загружена. Загружаем конфигурацию...', 'success');
-                updateRegistrationStatus('⏳ Загрузка конфигурации...', 'info');
-
-                await loadConfig();
-                log('✓ Конфигурация загружена', 'success');
-
-                // Автоматическая регистрация при запуске
+                document.getElementById('registerBtn').disabled = true;
+                log('Начинаем регистрацию...', 'success');
                 updateRegistrationStatus('⏳ Подключение к Janus Gateway...', 'info');
+
                 await connectToJanus();
 
                 if (!sessionId) {
@@ -774,8 +805,25 @@
                 log('✓ Готово! Можно звонить и принимать звонки', 'success');
 
             } catch (error) {
-                log(`✗ Ошибка инициализации: ${error}`, 'error');
-                updateRegistrationStatus('✗ Ошибка инициализации: ' + error.message, 'error');
+                log(`✗ Ошибка регистрации: ${error}`, 'error');
+                updateRegistrationStatus('✗ Ошибка: ' + error.message, 'error');
+                document.getElementById('registerBtn').disabled = false;
+            }
+        }
+
+        // Инициализация приложения
+        (async function init() {
+            try {
+                log('Страница загружена. Загружаем конфигурацию...', 'success');
+                updateRegistrationStatus('⏳ Готов к регистрации', 'info');
+
+                await loadConfig();
+                log('✓ Конфигурация загружена', 'success');
+                updateRegistrationStatus('✓ Конфигурация загружена. Нажмите "Зарегистрироваться"', 'success');
+
+            } catch (error) {
+                log(`✗ Ошибка загрузки конфигурации: ${error}`, 'error');
+                updateRegistrationStatus('✗ Ошибка загрузки конфигурации: ' + error.message, 'error');
             }
         })();
     </script>
