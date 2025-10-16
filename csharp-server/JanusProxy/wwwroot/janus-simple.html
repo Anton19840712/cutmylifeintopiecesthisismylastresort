@@ -274,7 +274,7 @@
                 const sipUsername = `sip:${username}@${domain}`;
                 const sipProxy = `sip:${server}:5060`;
 
-                log(`Регистрация: ${username}@${domain}`, 'info');
+                log(`Регистрация: ${username}@${domain} через proxy ${sipProxy}`, 'info');
 
                 const response = await janusRequest(`/${sessionId}/${handleId}`, {
                     janus: 'message',
@@ -285,7 +285,8 @@
                         secret: password,
                         authuser: username,
                         display_name: displayName,
-                        proxy: sipProxy
+                        proxy: sipProxy,
+                        outbound_proxy: sipProxy  // ← ДОБАВЛЯЕМ outbound_proxy!
                     }
                 });
 
