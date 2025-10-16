@@ -81,13 +81,20 @@
         </div>
 
         <div class="section">
+            <h3 style="margin-bottom: 15px; font-size: 16px; font-weight: 500;">Статус</h3>
+            <div id="registrationStatus" style="padding: 10px; background: #f0f0f0; border-radius: 4px; color: #666; margin-bottom: 15px;">
+                ⏳ Инициализация...
+            </div>
+        </div>
+
+        <div class="section">
             <h3 style="margin-bottom: 15px; font-size: 16px; font-weight: 500;">Звонок</h3>
             <div style="display: grid; grid-template-columns: 120px 1fr; gap: 10px; align-items: center;">
                 <label for="callUsername">Кому звонить:</label>
                 <input type="text" id="callUsername" placeholder="romaous">
             </div>
             <div style="margin-top: 15px;">
-                <button id="callBtn" onclick="makeCall()">Позвонить</button>
+                <button id="callBtn" onclick="makeCall()" disabled>Позвонить</button>
                 <button id="hangupBtn" onclick="hangup()" disabled>Завершить</button>
             </div>
         </div>
@@ -175,6 +182,22 @@
             logDiv.innerHTML += `<div class="${className}">[${timestamp}] ${message}</div>`;
             logDiv.scrollTop = logDiv.scrollHeight;
             console.log(`[${type}] ${message}`);
+        }
+
+        function updateRegistrationStatus(message, type = 'info') {
+            const statusDiv = document.getElementById('registrationStatus');
+
+            const colors = {
+                'success': { bg: '#d4edda', text: '#155724' },
+                'error': { bg: '#f8d7da', text: '#721c24' },
+                'warning': { bg: '#fff3cd', text: '#856404' },
+                'info': { bg: '#f0f0f0', text: '#666' }
+            };
+
+            const color = colors[type] || colors.info;
+            statusDiv.style.background = color.bg;
+            statusDiv.style.color = color.text;
+            statusDiv.textContent = message;
         }
 
         function updateCallStatus(status) {
@@ -342,9 +365,12 @@
                             if (event === 'registered') {
                                 log('✓✓✓ SIP РЕГИСТРАЦИЯ УСПЕШНА!', 'success');
                                 isRegistered = true;
+                                updateRegistrationStatus('✓ Зарегистрирован - готов принимать звонки', 'success');
+                                document.getElementById('callBtn').disabled = false;
                                 // НЕ прекращаем polling - нужны события звонка!
                             } else if (event === 'registration_failed') {
                                 log('✗ Регистрация не удалась: ' + (result.reason || 'unknown'), 'error');
+                                updateRegistrationStatus('✗ Ошибка регистрации: ' + (result.reason || 'unknown'), 'error');
                                 return;
                             } else if (event === 'incomingcall') {
                                 // Извлекаем имя абонента из SIP URI
@@ -412,44 +438,12 @@
             document.getElementById('callBtn').disabled = true;
 
             try {
-                // Шаг 1: Подключаемся к Janus, если еще не подключены
-                if (!sessionId) {
-                    log('Подключение к Janus Gateway...', 'info');
-                    await connectToJanus();
-                    if (!sessionId) {
-                        throw new Error('Не удалось подключиться к Janus');
-                    }
-                }
-
-                // Шаг 2: Подключаем SIP плагин, если еще не подключен
-                if (!handleId) {
-                    log('Подключение SIP плагина...', 'info');
-                    await attachPlugin();
-                    if (!handleId) {
-                        throw new Error('Не удалось подключить SIP плагин');
-                    }
-                }
-
-                // Шаг 3: Регистрируемся на SIP сервере (если еще не зарегистрированы)
+                // Проверяем, что мы зарегистрированы
                 if (!isRegistered) {
-                    log('Регистрация на SIP сервере...', 'info');
-                    await registerSIP();
-
-                    // Ждем события 'registered'
-                    log('⏳ Ожидание подтверждения регистрации...', 'info');
-                    const maxWait = 10000; // Максимум 10 секунд
-                    const startTime = Date.now();
-                    while (!isRegistered && (Date.now() - startTime) < maxWait) {
-                        await new Promise(resolve => setTimeout(resolve, 100));
-                    }
-
-                    if (!isRegistered) {
-                        throw new Error('Время ожидания регистрации истекло');
-                    }
-                    log('✓ Регистрация подтверждена', 'success');
+                    throw new Error('Не зарегистрированы на SIP сервере');
                 }
 
-                // Шаг 4: Теперь звоним
+                // Начинаем звонок
                 document.getElementById('hangupBtn').disabled = false;
 
                 // Получаем данные для звонка
@@ -728,9 +722,49 @@
 
         // Инициализация приложения
         (async function init() {
-            log('Страница загружена. Загружаем конфигурацию...', 'success');
-            await loadConfig();
-            log('✓ Готово! Нажмите "Позвонить" для звонка', 'success');
+            try {
+                log('Страница загружена. Загружаем конфигурацию...', 'success');
+                updateRegistrationStatus('⏳ Загрузка конфигурации...', 'info');
+
+                await loadConfig();
+                log('✓ Конфигурация загружена', 'success');
+
+                // Автоматическая регистрация при запуске
+                updateRegistrationStatus('⏳ Подключение к Janus Gateway...', 'info');
+                await connectToJanus();
+
+                if (!sessionId) {
+                    throw new Error('Не удалось подключиться к Janus');
+                }
+
+                updateRegistrationStatus('⏳ Подключение SIP плагина...', 'info');
+                await attachPlugin();
+
+                if (!handleId) {
+                    throw new Error('Не удалось подключить SIP плагин');
+                }
+
+                updateRegistrationStatus('⏳ Регистрация на SIP сервере...', 'info');
+                await registerSIP();
+
+                // Ждем события 'registered' от polling
+                log('⏳ Ожидание подтверждения регистрации...', 'info');
+                const maxWait = 10000; // Максимум 10 секунд
+                const startTime = Date.now();
+                while (!isRegistered && (Date.now() - startTime) < maxWait) {
+                    await new Promise(resolve => setTimeout(resolve, 100));
+                }
+
+                if (!isRegistered) {
+                    throw new Error('Время ожидания регистрации истекло');
+                }
+
+                log('✓ Готово! Можно звонить и принимать звонки', 'success');
+
+            } catch (error) {
+                log(`✗ Ошибка инициализации: ${error}`, 'error');
+                updateRegistrationStatus('✗ Ошибка инициализации: ' + error.message, 'error');
+            }
         })();
     </script>
 </body>
