@@ -124,6 +124,7 @@
         let DESTINATION = 'sip:romaous@sip.linphone.org';
         let HANGUP_DELAY = 2000;
         let STUN_SERVERS = ['stun:stun.l.google.com:19302'];
+        let TURN_SERVERS = [];
         let OPUS_CONFIG = {
             minPtime: 10,
             useInbandFec: true,
@@ -154,6 +155,7 @@
                 DESTINATION = CONFIG.sip.destinationUri;
                 HANGUP_DELAY = CONFIG.sip.hangupDelay;
                 STUN_SERVERS = CONFIG.webrtc.stunServers;
+                TURN_SERVERS = CONFIG.webrtc.turnServers || [];
                 OPUS_CONFIG = CONFIG.webrtc.opusCodec;
 
                 log('✓ Конфигурация загружена с сервера', 'success');
@@ -471,8 +473,12 @@
                 log('✓ Микрофон получен', 'success');
 
                 // Create PeerConnection
+                const iceServers = [
+                    ...STUN_SERVERS.map(url => ({ urls: url })),
+                    ...TURN_SERVERS
+                ];
                 pc = new RTCPeerConnection({
-                    iceServers: STUN_SERVERS.map(url => ({ urls: url }))
+                    iceServers: iceServers
                 });
 
                 // Add local stream
@@ -578,8 +584,12 @@
                 log('✓ Микрофон получен', 'success');
 
                 // Create PeerConnection
+                const iceServers = [
+                    ...STUN_SERVERS.map(url => ({ urls: url })),
+                    ...TURN_SERVERS
+                ];
                 pc = new RTCPeerConnection({
-                    iceServers: STUN_SERVERS.map(url => ({ urls: url }))
+                    iceServers: iceServers
                 });
 
                 // Add local stream

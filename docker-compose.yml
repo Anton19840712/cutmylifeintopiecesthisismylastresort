@@ -1,10 +1,22 @@
 services:
+  coturn:
+    image: coturn/coturn:latest
+    container_name: coturn-stun-turn
+    network_mode: host
+    command:
+      - "-n"
+      - "--log-file=stdout"
+      - "--listening-port=3478"
+      - "--fingerprint"
+      - "--lt-cred-mech"
+      - "--user=webrtc:webrtc123"
+      - "--realm=localhost"
+    restart: unless-stopped
+
   janus:
     image: canyan/janus-gateway:latest
     container_name: janus-webrtc-gateway
-    ports:
-      - "8088:8088"
-      - "20000-20100:20000-20100/udp"
+    network_mode: host
     volumes:
       - ./janus-config:/usr/local/etc/janus:rw
     restart: unless-stopped

@@ -76,6 +76,7 @@ app.MapGet("/api/config", () =>
         webrtc = new
         {
             stunServers = webrtcConfig.GetSection("StunServers").Get<string[]>(),
+            turnServers = webrtcConfig.GetSection("TurnServers").Get<object[]>() ?? Array.Empty<object>(),
             iceTransportPolicy = webrtcConfig["IceTransportPolicy"],
             opusCodec = new
             {
