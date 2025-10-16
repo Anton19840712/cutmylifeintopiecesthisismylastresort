@@ -1,8 +1,16 @@
+networks:
+  webrtc:
+    driver: bridge
+
 services:
   coturn:
     image: coturn/coturn:latest
     container_name: coturn-stun-turn
-    network_mode: host
+    ports:
+      - "3478:3478/udp"
+      - "3478:3478/tcp"
+    networks:
+      - webrtc
     command:
       - "-n"
       - "--log-file=stdout"
@@ -16,7 +24,13 @@ services:
   janus:
     image: canyan/janus-gateway:latest
     container_name: janus-webrtc-gateway
-    network_mode: host
+    ports:
+      - "8088:8088"
+      - "20000-20100:20000-20100/udp"
+    networks:
+      - webrtc
     volumes:
       - ./janus-config:/usr/local/etc/janus:rw
+    depends_on:
+      - coturn
     restart: unless-stopped
