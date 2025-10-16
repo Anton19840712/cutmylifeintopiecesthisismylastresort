@@ -477,6 +477,7 @@
                     ...STUN_SERVERS.map(url => ({ urls: url })),
                     ...TURN_SERVERS
                 ];
+                console.log('ICE Servers:', JSON.stringify(iceServers, null, 2));
                 pc = new RTCPeerConnection({
                     iceServers: iceServers
                 });
@@ -588,6 +589,7 @@
                     ...STUN_SERVERS.map(url => ({ urls: url })),
                     ...TURN_SERVERS
                 ];
+                console.log('ICE Servers:', JSON.stringify(iceServers, null, 2));
                 pc = new RTCPeerConnection({
                     iceServers: iceServers
                 });
