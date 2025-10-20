@@ -118,13 +118,10 @@
     <script>
         // Конфигурация загружается с сервера
         let CONFIG = null;
+
+        // Дефолтные значения (будут перезаписаны из конфига сервера)
         let JANUS_URL = '/janus';
-        let SIP_SERVER = 'sip:sip.linphone.org';
-        let USERNAME = 'anton-test';
-        let PASSWORD = 'Ant6729@$%#';
-        let DESTINATION = 'sip:romaous@sip.linphone.org';
-        let HANGUP_DELAY = 2000;
-        let STUN_SERVERS = ['stun:stun.l.google.com:19302'];
+        let STUN_SERVERS = ['stun:stun.l.google.com:19302'];  // Fallback, если конфиг не загрузится
         let TURN_SERVERS = [];
         let OPUS_CONFIG = {
             minPtime: 10,
@@ -138,9 +135,9 @@
         let handleId = null;
         let pc = null;
         let localStream = null;
+        let isRegistered = false;  // Флаг успешной регистрации
         let incomingOffer = null;  // Сохраняем offer входящего звонка
         let incomingCaller = null; // Сохраняем информацию о звонящем
-        let isRegistered = false;  // Флаг успешной регистрации
 
         // Загружаем конфигурацию с сервера
         async function loadConfig() {
@@ -150,17 +147,11 @@
 
                 // Применяем конфигурацию
                 JANUS_URL = CONFIG.janus.url;
-                SIP_SERVER = CONFIG.sip.server;
-                USERNAME = CONFIG.sip.username;
-                PASSWORD = CONFIG.sip.password;
-                DESTINATION = CONFIG.sip.destinationUri;
-                HANGUP_DELAY = CONFIG.sip.hangupDelay;
                 STUN_SERVERS = CONFIG.webrtc.stunServers;
                 TURN_SERVERS = CONFIG.webrtc.turnServers || [];
                 OPUS_CONFIG = CONFIG.webrtc.opusCodec;
 
                 log('✓ Конфигурация загружена с сервера', 'success');
-                log(`SIP: ${USERNAME} → ${DESTINATION}`, 'info');
 
                 // Автозаполняем поля формы из конфига
                 document.getElementById('sipServer').value = CONFIG.sip.server.replace('sip:', '');
@@ -229,6 +220,14 @@
 
                 const data = await response.json();
                 log(`← Response: ${JSON.stringify(data)}`, 'info');
+
+                // Проверка на ошибку "No such session"
+                if (data.janus === 'error' && data.error && data.error.code === 458) {
+                    log('⚠ Сессия не найдена, сброс...', 'warn');
+                    sessionId = null;
+                    handleId = null;
+                }
+
                 return data;
             } catch (error) {
                 log(`✗ Request failed: ${error}`, 'error');
@@ -383,6 +382,12 @@
                                 updateRegistrationStatus('✗ Ошибка регистрации: ' + (result.reason || 'unknown'), 'error');
                                 return;
                             } else if (event === 'incomingcall') {
+                                // Проверяем что регистрация завершена
+                                if (!isRegistered) {
+                                    log('⚠ Входящий звонок получен до завершения регистрации, игнорируем...', 'warn');
+                                    return;
+                                }
+
                                 // Извлекаем имя абонента из SIP URI
                                 const callerUri = result.username || 'Неизвестный';
                                 const callerName = callerUri.replace('sip:', '').split('@')[0];
@@ -554,6 +559,25 @@
                 log('✓ Offer создан с улучшенными параметрами Opus', 'success');
                 console.log('📤 Offer SDP:', offer.sdp);
 
+                // Ждём завершения ICE gathering перед отправкой
+                log('⏳ Ожидание ICE candidates...', 'info');
+                await new Promise((resolve) => {
+                    if (pc.iceGatheringState === 'complete') {
+                        resolve();
+                    } else {
+                        const checkGathering = () => {
+                            if (pc.iceGatheringState === 'complete') {
+                                pc.removeEventListener('icegatheringstatechange', checkGathering);
+                                resolve();
+                            }
+                        };
+                        pc.addEventListener('icegatheringstatechange', checkGathering);
+                        // Таймаут 5 секунд на всякий случай
+                        setTimeout(resolve, 5000);
+                    }
+                });
+                log('✓ ICE gathering завершён', 'success');
+
                 // Send INVITE
                 const response = await janusRequest(`/${sessionId}/${handleId}`, {
                     janus: 'message',
@@ -671,6 +695,25 @@
                 await pc.setLocalDescription(answer);
                 log('✓ Answer создан', 'success');
                 console.log('📤 Answer SDP:', answer.sdp);
+
+                // Ждём завершения ICE gathering перед отправкой
+                log('⏳ Ожидание ICE candidates...', 'info');
+                await new Promise((resolve) => {
+                    if (pc.iceGatheringState === 'complete') {
+                        resolve();
+                    } else {
+                        const checkGathering = () => {
+                            if (pc.iceGatheringState === 'complete') {
+                                pc.removeEventListener('icegatheringstatechange', checkGathering);
+                                resolve();
+                            }
+                        };
+                        pc.addEventListener('icegatheringstatechange', checkGathering);
+                        // Таймаут 5 секунд на всякий случай
+                        setTimeout(resolve, 5000);
+                    }
+                });
+                log('✓ ICE gathering завершён', 'success');
 
                 // Send ACCEPT with answer
                 const response = await janusRequest(`/${sessionId}/${handleId}`, {
