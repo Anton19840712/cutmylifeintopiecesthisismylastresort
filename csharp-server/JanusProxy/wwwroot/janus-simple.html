@@ -559,26 +559,7 @@
                 log('✓ Offer создан с улучшенными параметрами Opus', 'success');
                 console.log('📤 Offer SDP:', offer.sdp);
 
-                // Ждём завершения ICE gathering перед отправкой
-                log('⏳ Ожидание ICE candidates...', 'info');
-                await new Promise((resolve) => {
-                    if (pc.iceGatheringState === 'complete') {
-                        resolve();
-                    } else {
-                        const checkGathering = () => {
-                            if (pc.iceGatheringState === 'complete') {
-                                pc.removeEventListener('icegatheringstatechange', checkGathering);
-                                resolve();
-                            }
-                        };
-                        pc.addEventListener('icegatheringstatechange', checkGathering);
-                        // Таймаут 5 секунд на всякий случай
-                        setTimeout(resolve, 5000);
-                    }
-                });
-                log('✓ ICE gathering завершён', 'success');
-
-                // Send INVITE
+                // Send INVITE сразу, ICE candidates будут отправлены через trickle
                 const response = await janusRequest(`/${sessionId}/${handleId}`, {
                     janus: 'message',
                     transaction: randomString(),
@@ -696,26 +677,7 @@
                 log('✓ Answer создан', 'success');
                 console.log('📤 Answer SDP:', answer.sdp);
 
-                // Ждём завершения ICE gathering перед отправкой
-                log('⏳ Ожидание ICE candidates...', 'info');
-                await new Promise((resolve) => {
-                    if (pc.iceGatheringState === 'complete') {
-                        resolve();
-                    } else {
-                        const checkGathering = () => {
-                            if (pc.iceGatheringState === 'complete') {
-                                pc.removeEventListener('icegatheringstatechange', checkGathering);
-                                resolve();
-                            }
-                        };
-                        pc.addEventListener('icegatheringstatechange', checkGathering);
-                        // Таймаут 5 секунд на всякий случай
-                        setTimeout(resolve, 5000);
-                    }
-                });
-                log('✓ ICE gathering завершён', 'success');
-
-                // Send ACCEPT with answer
+                // Send ACCEPT сразу, ICE candidates будут отправлены через trickle
                 const response = await janusRequest(`/${sessionId}/${handleId}`, {
                     janus: 'message',
                     transaction: randomString(),
