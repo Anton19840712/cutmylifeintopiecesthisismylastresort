@@ -138,6 +138,7 @@
         let isRegistered = false;  // Флаг успешной регистрации
         let incomingOffer = null;  // Сохраняем offer входящего звонка
         let incomingCaller = null; // Сохраняем информацию о звонящем
+        let keepaliveInterval = null;  // ID интервала keepalive для очистки при переподключении
 
         // Загружаем конфигурацию с сервера
         async function loadConfig() {
@@ -223,9 +224,32 @@
 
                 // Проверка на ошибку "No such session"
                 if (data.janus === 'error' && data.error && data.error.code === 458) {
-                    log('⚠ Сессия не найдена, сброс...', 'warn');
+                    log('⚠ Сессия истекла, автоматическое переподключение...', 'warn');
                     sessionId = null;
                     handleId = null;
+                    isRegistered = false;
+
+                    // Обновляем UI
+                    updateRegistrationStatus('⏳ Сессия истекла, переподключение...', 'warning');
+                    document.getElementById('callBtn').disabled = true;
+
+                    // Автоматическое переподключение через 1 секунду
+                    setTimeout(async () => {
+                        try {
+                            log('🔄 Автоматическое переподключение...', 'info');
+                            await connectToJanus();
+                            if (sessionId) {
+                                await attachPlugin();
+                                if (handleId) {
+                                    await registerSIP();
+                                }
+                            }
+                        } catch (error) {
+                            log(`✗ Ошибка автоматического переподключения: ${error}`, 'error');
+                            updateRegistrationStatus('✗ Ошибка переподключения. Нажмите "Зарегистрироваться"', 'error');
+                            document.getElementById('registerBtn').disabled = false;
+                        }
+                    }, 1000);
                 }
 
                 return data;
@@ -245,8 +269,14 @@
                     sessionId = response.data.id;
                     log(`✓ Создана сессия: ${sessionId}`, 'success');
 
+                    // Очищаем старый keepalive интервал если есть
+                    if (keepaliveInterval) {
+                        clearInterval(keepaliveInterval);
+                        log('🧹 Очищен старый keepalive интервал', 'info');
+                    }
+
                     // Start keepalive
-                    setInterval(() => {
+                    keepaliveInterval = setInterval(() => {
                         if (sessionId) {
                             janusRequest(`/${sessionId}`, { janus: 'keepalive', transaction: randomString() });
                         }
