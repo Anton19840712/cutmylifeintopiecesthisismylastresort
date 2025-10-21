@@ -14,7 +14,7 @@ general: {
 	# Enable local keep-alives to keep the registration open. Keep-alives are
 	# sent in the form of OPTIONS requests, at the given interval inseconds.
 	# (0 to disable)
-	keepalive_interval = 120
+	keepalive_interval = 30
 
 	# Indicate if the server is behind NAT. If so, the server will use STUN
 	# to guess its own public IP address and use it in the Contact header of
@@ -25,7 +25,7 @@ general: {
 	# user_agent = "Cool WebRTC Gateway"
 
 	# Expiration time for registrations
-	register_ttl = 3600
+	register_ttl = 30
 
 	# Range of ports to use for RTP/RTCP (default=10000-60000)
 	rtp_port_range = "20000-40000"
@@ -63,5 +63,5 @@ anton-test: {
 	display_name = "Anton Test"
 	registrar = "sip.linphone.org"
 	proxy = "sip:sip.linphone.org:5060"
-	register_on_startup = yes
+	register_on_startup = true
 }

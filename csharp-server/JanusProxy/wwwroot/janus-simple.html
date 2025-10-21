@@ -139,6 +139,7 @@
         let incomingOffer = null;  // Сохраняем offer входящего звонка
         let incomingCaller = null; // Сохраняем информацию о звонящем
         let keepaliveInterval = null;  // ID интервала keepalive для очистки при переподключении
+        let reconnectCount = 0;  // Счетчик автоматических перерегистраций
 
         // Загружаем конфигурацию с сервера
         async function loadConfig() {
@@ -155,9 +156,11 @@
                 log('✓ Конфигурация загружена с сервера', 'success');
 
                 // Автозаполняем поля формы из конфига
-                document.getElementById('sipServer').value = CONFIG.sip.server.replace('sip:', '');
+                // sipServer используется для proxy (должен быть IP для соединения)
+                document.getElementById('sipServer').value = CONFIG.sip.proxy.replace('sip:', '').split(':')[0];
                 document.getElementById('sipUsername').value = CONFIG.sip.username;
-                document.getElementById('sipDomain').value = CONFIG.sip.proxy.replace('sip:', '').split(':')[0];
+                // sipDomain используется для username realm (должен быть домен для аутентификации)
+                document.getElementById('sipDomain').value = CONFIG.sip.server.replace('sip:', '');
                 document.getElementById('sipPassword').value = CONFIG.sip.password;
                 document.getElementById('sipDisplayName').value = CONFIG.sip.displayName;
 
@@ -224,19 +227,20 @@
 
                 // Проверка на ошибку "No such session"
                 if (data.janus === 'error' && data.error && data.error.code === 458) {
-                    log('⚠ Сессия истекла, автоматическое переподключение...', 'warn');
+                    reconnectCount++;
+                    log(`⚠ Сессия истекла (перерегистрация #${reconnectCount}), автоматическое переподключение...`, 'warn');
                     sessionId = null;
                     handleId = null;
                     isRegistered = false;
 
                     // Обновляем UI
-                    updateRegistrationStatus('⏳ Сессия истекла, переподключение...', 'warning');
+                    updateRegistrationStatus(`⏳ Переподключение #${reconnectCount}...`, 'warning');
                     document.getElementById('callBtn').disabled = true;
 
                     // Автоматическое переподключение через 1 секунду
                     setTimeout(async () => {
                         try {
-                            log('🔄 Автоматическое переподключение...', 'info');
+                            log(`🔄 Автоматическое переподключение #${reconnectCount}...`, 'info');
                             await connectToJanus();
                             if (sessionId) {
                                 await attachPlugin();
@@ -275,12 +279,12 @@
                         log('🧹 Очищен старый keepalive интервал', 'info');
                     }
 
-                    // Start keepalive
+                    // Start keepalive (каждые 20 секунд = 3 раза за 60 сек)
                     keepaliveInterval = setInterval(() => {
                         if (sessionId) {
                             janusRequest(`/${sessionId}`, { janus: 'keepalive', transaction: randomString() });
                         }
-                    }, 30000);
+                    }, 20000);
                 } else {
                     log(`✗ Ошибка создания сессии: ${response.error}`, 'error');
                     throw new Error(response.error);
