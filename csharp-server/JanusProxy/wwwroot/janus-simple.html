@@ -535,7 +535,10 @@
                 ];
                 console.log('ICE Servers:', JSON.stringify(iceServers, null, 2));
                 pc = new RTCPeerConnection({
-                    iceServers: iceServers
+                    iceServers: iceServers,
+                    rtcpMuxPolicy: 'require',        // Требуем мультиплексирование RTP/RTCP на одном порту
+                    bundlePolicy: 'max-bundle',      // Используем один транспорт для всех медиа
+                    iceTransportPolicy: 'all'        // Пытаемся все типы соединений (host, srflx, relay)
                 });
 
                 // Add local stream
@@ -654,7 +657,10 @@
                 ];
                 console.log('ICE Servers:', JSON.stringify(iceServers, null, 2));
                 pc = new RTCPeerConnection({
-                    iceServers: iceServers
+                    iceServers: iceServers,
+                    rtcpMuxPolicy: 'require',        // Требуем мультиплексирование RTP/RTCP на одном порту
+                    bundlePolicy: 'max-bundle',      // Используем один транспорт для всех медиа
+                    iceTransportPolicy: 'all'        // Пытаемся все типы соединений (host, srflx, relay)
                 });
 
                 // Add local stream
