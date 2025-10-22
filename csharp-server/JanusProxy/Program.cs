@@ -113,7 +113,23 @@ app.Map(janusProxyPath, janusApp =>
                 ? $"{janusApiUrl}/janus{queryString}"
                 : $"{janusApiUrl}/janus{path}{queryString}";
 
+            var clientIp = context.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+            var userAgent = context.Request.Headers["User-Agent"].ToString();
+
+            // Извлечь session_id из пути (например, /janus/1234567890 или /janus/1234567890/handle)
+            var sessionIdFromPath = "";
+            var pathParts = path.TrimStart('/').Split('/');
+            if (pathParts.Length > 0 && long.TryParse(pathParts[0], out var sessionId))
+            {
+                sessionIdFromPath = sessionId.ToString();
+            }
+
             Console.WriteLine($"[Janus Proxy] {context.Request.Method} {path} → {targetUrl}");
+            Console.WriteLine($"[Janus Proxy] Client: {clientIp} | UA: {userAgent}");
+            if (!string.IsNullOrEmpty(sessionIdFromPath))
+            {
+                Console.WriteLine($"[Janus Proxy] Session ID from path: {sessionIdFromPath}");
+            }
 
             using var httpClient = new HttpClient();
             HttpResponseMessage response;
@@ -127,6 +143,17 @@ app.Map(janusProxyPath, janusApp =>
                 // Читаем тело запроса
                 using var reader = new StreamReader(context.Request.Body);
                 var body = await reader.ReadToEndAsync();
+
+                // Попытка извлечь session_id из тела запроса
+                try
+                {
+                    var jsonDoc = JsonDocument.Parse(body);
+                    if (jsonDoc.RootElement.TryGetProperty("session_id", out var sessionIdElement))
+                    {
+                        Console.WriteLine($"[Janus Proxy] Session ID: {sessionIdElement.GetInt64()}");
+                    }
+                }
+                catch { }
 
                 Console.WriteLine($"[Janus Proxy] Request body: {body.Substring(0, Math.Min(100, body.Length))}...");
 
@@ -142,6 +169,34 @@ app.Map(janusProxyPath, janusApp =>
 
             // Читаем ответ от Janus
             var responseBody = await response.Content.ReadAsStringAsync();
+
+            // Проверяем на ошибки от Janus
+            try
+            {
+                var jsonDoc = JsonDocument.Parse(responseBody);
+                if (jsonDoc.RootElement.TryGetProperty("janus", out var janusElement) &&
+                    janusElement.GetString() == "error")
+                {
+                    var errorCode = jsonDoc.RootElement.TryGetProperty("error", out var errorElement)
+                        ? errorElement.TryGetProperty("code", out var codeElement) ? codeElement.GetInt32() : 0
+                        : 0;
+                    var errorReason = jsonDoc.RootElement.TryGetProperty("error", out var errorElement2)
+                        ? errorElement2.TryGetProperty("reason", out var reasonElement) ? reasonElement.GetString() : ""
+                        : "";
+
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine($"!!! JANUS ERROR {errorCode} !!!");
+                    Console.WriteLine($"!!! From Client: {clientIp} | UA: {userAgent}");
+                    if (!string.IsNullOrEmpty(sessionIdFromPath))
+                    {
+                        Console.WriteLine($"!!! Session ID: {sessionIdFromPath}");
+                    }
+                    Console.WriteLine($"!!! Reason: {errorReason}");
+                    Console.ResetColor();
+                }
+            }
+            catch { }
+
             Console.WriteLine($"[Janus Proxy] Response: {responseBody.Substring(0, Math.Min(200, responseBody.Length))}...");
 
             // Возвращаем ответ клиенту
@@ -165,7 +220,7 @@ app.UseStaticFiles();
 
 // Запуск сервера
 Console.WriteLine("╔════════════════════════════════════════════════════════════╗");
-Console.WriteLine("║  Janus Proxy Server (ASP.NET Core)                        ║");
+Console.WriteLine("║  Janus Proxy Server (ASP.NET Core)                         ║");
 Console.WriteLine("╚════════════════════════════════════════════════════════════╝");
 Console.WriteLine($"  Environment:  {app.Environment.EnvironmentName}");
 Console.WriteLine($"  HTTP:         {serverUrls}");
