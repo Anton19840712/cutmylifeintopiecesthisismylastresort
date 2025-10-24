@@ -57,26 +57,44 @@
     <div class="container">
         <h1>SIP Client</h1>
 
+        <!-- Авторизация -->
+        <div class="section" id="authSection" style="background: #f8f9fa;">
+            <h3 style="margin-bottom: 15px; font-size: 16px; font-weight: 500;">🔐 Авторизация</h3>
+            <div style="display: grid; grid-template-columns: 120px 1fr; gap: 10px; align-items: center;">
+                <label>Логин:</label>
+                <input type="text" id="authLogin" value="user" placeholder="user">
+
+                <label>Пароль:</label>
+                <input type="password" id="authPassword" value="user" placeholder="user">
+            </div>
+            <div style="margin-top: 15px;">
+                <button id="loginBtn" onclick="performLogin()" style="background: #007bff; color: #fff; border-color: #007bff; width: 100%;">
+                    Войти
+                </button>
+            </div>
+            <div id="authStatus" style="padding: 10px; margin-top: 10px; border-radius: 4px; display: none;"></div>
+        </div>
+
         <div class="section">
             <h3 style="margin-bottom: 15px; font-size: 16px; font-weight: 500;">Учетная запись SIP</h3>
             <div style="display: grid; grid-template-columns: 120px 1fr; gap: 10px; align-items: center;">
                 <label>SIP Server:</label>
-                <input type="text" id="sipServer" placeholder="sip.linphone.org">
+                <input type="text" id="sipServer" value="172.16.211.135">
 
                 <label>Username:</label>
-                <input type="text" id="sipUsername" placeholder="anton-test">
+                <input type="text" id="sipUsername" value="2001">
 
                 <label>Domain:</label>
-                <input type="text" id="sipDomain" placeholder="sip.linphone.org">
+                <input type="text" id="sipDomain" value="sip.pbx">
 
                 <label>Password:</label>
                 <div style="display: flex; gap: 5px;">
-                    <input type="password" id="sipPassword" placeholder="••••••••" style="flex: 1;">
+                    <input type="password" id="sipPassword" value="elephant" style="flex: 1;">
                     <button type="button" onclick="togglePassword()" style="padding: 8px 12px; margin: 0; min-width: 40px;">👁</button>
                 </div>
 
                 <label>Display Name:</label>
-                <input type="text" id="sipDisplayName" placeholder="Anton Test">
+                <input type="text" id="sipDisplayName" value="2001">
             </div>
         </div>
 
@@ -92,7 +110,7 @@
             <h3 style="margin-bottom: 15px; font-size: 16px; font-weight: 500;">Звонок</h3>
             <div style="display: grid; grid-template-columns: 120px 1fr; gap: 10px; align-items: center;">
                 <label for="callUsername">Кому звонить:</label>
-                <input type="text" id="callUsername" placeholder="romaous">
+                <input type="text" id="callUsername" value="2004">
             </div>
             <div style="margin-top: 15px;">
                 <button id="callBtn" onclick="makeCall()" disabled>Позвонить</button>
@@ -116,6 +134,11 @@
     </div>
 
     <script>
+        // Токены авторизации
+        let accessToken = null;
+        let refreshToken = null;
+        let refreshTokenInterval = null;
+
         // Конфигурация загружается с сервера
         let CONFIG = null;
 
@@ -141,7 +164,170 @@
         let keepaliveInterval = null;  // ID интервала keepalive для очистки при переподключении
         let reconnectCount = 0;  // Счетчик автоматических перерегистраций
 
-        // Загружаем конфигурацию с сервера
+        // Получить токен из URL или localStorage
+        function getTokenFromSource() {
+            // Проверяем URL параметр ?token=...
+            const urlParams = new URLSearchParams(window.location.search);
+            const tokenFromUrl = urlParams.get('token');
+            if (tokenFromUrl) {
+                console.log('✓ Токен получен из URL');
+                localStorage.setItem('accessToken', tokenFromUrl);
+                return tokenFromUrl;
+            }
+
+            // Проверяем localStorage
+            const tokenFromStorage = localStorage.getItem('accessToken');
+            if (tokenFromStorage) {
+                console.log('✓ Токен получен из localStorage');
+                return tokenFromStorage;
+            }
+
+            console.log('ℹ Токен не найден');
+            return null;
+        }
+
+        // Авторизация через форму (для тестирования)
+        async function performLogin() {
+            const login = document.getElementById('authLogin').value;
+            const password = document.getElementById('authPassword').value;
+            const authStatus = document.getElementById('authStatus');
+            const loginBtn = document.getElementById('loginBtn');
+
+            try {
+                loginBtn.disabled = true;
+                authStatus.style.display = 'block';
+                authStatus.style.background = '#e7f3ff';
+                authStatus.style.color = '#004085';
+                authStatus.textContent = '🔄 Авторизация...';
+
+                console.log('🔐 Авторизация через форму...');
+
+                // Логинимся напрямую через AuthService
+                const loginResponse = await fetch('http://localhost:6022/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ login, password })
+                });
+
+                if (!loginResponse.ok) {
+                    throw new Error('Неверный логин или пароль');
+                }
+
+                const tokens = await loginResponse.json();
+                accessToken = tokens.accessToken;
+                refreshToken = tokens.refreshToken;
+
+                // Сохраняем токены
+                localStorage.setItem('accessToken', accessToken);
+                localStorage.setItem('refreshToken', refreshToken);
+
+                // Логирование в консоль
+                console.log('Access Token:', accessToken);
+                console.log('Refresh Token:', refreshToken);
+
+                authStatus.style.background = '#d4edda';
+                authStatus.style.color = '#155724';
+                authStatus.textContent = 'Авторизация успешна';
+
+                // Запускаем автообновление токенов
+                startTokenRefresh();
+
+            } catch (error) {
+                console.error('✗ Ошибка авторизации:', error);
+                authStatus.style.background = '#f8d7da';
+                authStatus.style.color = '#721c24';
+                authStatus.textContent = `✗ Ошибка: ${error.message}`;
+                loginBtn.disabled = false;
+            }
+        }
+
+        // Загрузка конфигурации с использованием токена
+        async function loadConfigWithToken() {
+            try {
+                log('🔄 Загрузка конфигурации по токену...', 'info');
+
+                const response = await fetch('/api/auth-config', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Ошибка ${response.status}`);
+                }
+
+                CONFIG = await response.json();
+
+                // Применяем конфигурацию
+                JANUS_URL = CONFIG.janus.url;
+                STUN_SERVERS = CONFIG.webrtc.stunServers;
+                TURN_SERVERS = CONFIG.webrtc.turnServers || [];
+                OPUS_CONFIG = CONFIG.webrtc.opusCodec;
+
+                log('✓ Конфигурация загружена с токеном', 'success');
+                log(`✓ Сессия: ${CONFIG.session.sessionId}`, 'info');
+
+                // Автозаполняем поля формы
+                document.getElementById('sipServer').value = CONFIG.sip.proxy.replace('sip:', '').split(':')[0];
+                document.getElementById('sipUsername').value = CONFIG.sip.username;
+                document.getElementById('sipDomain').value = CONFIG.sip.server.replace('sip:', '');
+                document.getElementById('sipPassword').value = CONFIG.sip.password;
+                document.getElementById('sipDisplayName').value = CONFIG.sip.displayName;
+
+                if (CONFIG.sip.destinationUri) {
+                    const destUsername = CONFIG.sip.destinationUri.replace('sip:', '').split('@')[0];
+                    document.getElementById('callUsername').value = destUsername;
+                }
+
+                updateRegistrationStatus('✓ Готов к регистрации. Нажмите "Зарегистрироваться"', 'success');
+
+            } catch (error) {
+                log(`✗ Ошибка загрузки конфигурации: ${error.message}`, 'error');
+                throw error;
+            }
+        }
+
+        // Обновление токена
+        async function refreshAccessToken() {
+            try {
+                console.log('🔄 Обновление токена...');
+
+                const response = await fetch('http://localhost:6022/api/auth/refresh', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ refreshToken })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Не удалось обновить токен');
+                }
+
+                const tokens = await response.json();
+                accessToken = tokens.accessToken;
+                refreshToken = tokens.refreshToken;
+
+                localStorage.setItem('accessToken', accessToken);
+                localStorage.setItem('refreshToken', refreshToken);
+
+                console.log('✓ Токен обновлен');
+            } catch (error) {
+                console.error('✗ Ошибка обновления токена:', error);
+                localStorage.removeItem('accessToken');
+                localStorage.removeItem('refreshToken');
+                log('✗ Сессия истекла. Войдите снова.', 'error');
+            }
+        }
+
+        // Запуск автообновления токенов (каждые 5 минут)
+        function startTokenRefresh() {
+            if (refreshTokenInterval) clearInterval(refreshTokenInterval);
+            refreshTokenInterval = setInterval(refreshAccessToken, 5 * 60 * 1000);
+            console.log('✓ Автообновление токенов запущено (5 мин)');
+        }
+
+        // Загружаем конфигурацию с сервера (старый метод, fallback)
         async function loadConfig() {
             try {
                 const response = await fetch('/api/config');
@@ -179,7 +365,15 @@
             const className = type;
             logDiv.innerHTML += `<div class="${className}">[${timestamp}] ${message}</div>`;
             logDiv.scrollTop = logDiv.scrollHeight;
-            console.log(`[${type}] ${message}`);
+
+            // Дублируем в консоль браузера с цветами
+            const styles = {
+                'success': 'color: #28a745; font-weight: bold;',
+                'error': 'color: #dc3545; font-weight: bold;',
+                'warning': 'color: #ffc107; font-weight: bold;',
+                'info': 'color: #17a2b8;'
+            };
+            console.log(`%c[${timestamp}] [${type.toUpperCase()}] ${message}`, styles[type] || styles.info);
         }
 
         function updateRegistrationStatus(message, type = 'info') {
@@ -859,16 +1053,32 @@
         // Инициализация приложения
         (async function init() {
             try {
-                log('Страница загружена. Загружаем конфигурацию...', 'success');
-                updateRegistrationStatus('⏳ Готов к регистрации', 'info');
+                log('Страница загружена', 'success');
+                updateRegistrationStatus('⏳ Инициализация...', 'info');
 
-                await loadConfig();
-                log('✓ Конфигурация загружена', 'success');
-                updateRegistrationStatus('✓ Конфигурация загружена. Нажмите "Зарегистрироваться"', 'success');
+                // Проверяем наличие токена
+                accessToken = getTokenFromSource();
+
+                if (accessToken) {
+                    // Токен найден в localStorage
+                    console.log('Access Token загружен из localStorage:', accessToken);
+
+                    // Получаем refresh токен из localStorage
+                    refreshToken = localStorage.getItem('refreshToken');
+                    if (refreshToken) {
+                        console.log('Refresh Token загружен из localStorage:', refreshToken);
+                        startTokenRefresh();
+                    }
+
+                    updateRegistrationStatus('Авторизован', 'success');
+                } else {
+                    // Токен не найден
+                    updateRegistrationStatus('Войдите для продолжения', 'info');
+                }
 
             } catch (error) {
-                log(`✗ Ошибка загрузки конфигурации: ${error}`, 'error');
-                updateRegistrationStatus('✗ Ошибка загрузки конфигурации: ' + error.message, 'error');
+                log(`✗ Ошибка инициализации: ${error}`, 'error');
+                updateRegistrationStatus('✗ Ошибка инициализации', 'error');
             }
         })();
     </script>
