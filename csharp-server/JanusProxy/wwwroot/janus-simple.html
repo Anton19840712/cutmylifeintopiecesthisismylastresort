@@ -200,7 +200,11 @@
                 authStatus.style.color = '#004085';
                 authStatus.textContent = '🔄 Авторизация...';
 
-                console.log('🔐 Авторизация через форму...');
+                console.log('%c━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 'color: #888');
+                console.log('%cАВТОРИЗАЦИЯ', 'color: #ff9800; font-weight: bold; font-size: 14px');
+                console.log('%c━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 'color: #888');
+                console.log('%cЛогин:', login, 'color: #666');
+                console.log('%cЗапрос: POST http://localhost:6022/api/auth/login', 'color: #2196f3');
 
                 // Логинимся напрямую через AuthService
                 const loginResponse = await fetch('http://localhost:6022/api/auth/login', {
@@ -217,23 +221,42 @@
                 accessToken = tokens.accessToken;
                 refreshToken = tokens.refreshToken;
 
+                console.log('%cТокены получены от AuthService', 'color: #4caf50; font-weight: bold');
+
                 // Сохраняем токены
                 localStorage.setItem('accessToken', accessToken);
                 localStorage.setItem('refreshToken', refreshToken);
 
-                // Логирование в консоль
-                console.log('Access Token:', accessToken);
-                console.log('Refresh Token:', refreshToken);
+                console.log('%cТокены сохранены в localStorage', 'color: #9c27b0');
+                console.log('%cAccess Token (начало):', accessToken.substring(0, 50) + '...', 'color: #666');
+                console.log('%cRefresh Token (начало):', refreshToken.substring(0, 50) + '...', 'color: #666');
 
                 authStatus.style.background = '#d4edda';
                 authStatus.style.color = '#155724';
-                authStatus.textContent = 'Авторизация успешна';
+                authStatus.textContent = '✓ Авторизация успешна. Загрузка конфигурации...';
 
                 // Запускаем автообновление токенов
                 startTokenRefresh();
+                console.log('%cАвтообновление токенов запущено (интервал: 5 мин)', 'color: #00bcd4');
+
+                console.log('%c━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 'color: #888');
+                console.log('%cЗАГРУЗКА ПЕРСОНАЛЬНОЙ КОНФИГУРАЦИИ', 'color: #ff9800; font-weight: bold');
+
+                // Загружаем конфигурацию с новым токеном
+                await loadConfig();
+
+                authStatus.textContent = '✓ Готов к работе';
+                loginBtn.disabled = false;
+
+                console.log('%c━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 'color: #888');
+                console.log('%cВСЁ ГОТОВО!', 'color: #4caf50; font-weight: bold; font-size: 16px');
+                console.log('%c━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 'color: #888');
 
             } catch (error) {
-                console.error('✗ Ошибка авторизации:', error);
+                console.log('%cОШИБКА АВТОРИЗАЦИИ', 'color: #f44336; font-weight: bold; font-size: 14px');
+                console.error(error);
+                console.log('%c━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 'color: #888');
+
                 authStatus.style.background = '#f8d7da';
                 authStatus.style.color = '#721c24';
                 authStatus.textContent = `✗ Ошибка: ${error.message}`;
@@ -327,11 +350,40 @@
             console.log('✓ Автообновление токенов запущено (5 мин)');
         }
 
-        // Загружаем конфигурацию с сервера (старый метод, fallback)
+        // Загружаем конфигурацию с сервера
         async function loadConfig() {
             try {
-                const response = await fetch('/api/config');
+                console.log('%c━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 'color: #888');
+                console.log('%cЗАГРУЗКА КОНФИГУРАЦИИ', 'color: #00bcd4; font-weight: bold; font-size: 14px');
+                console.log('%c━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 'color: #888');
+
+                // Формируем заголовки запроса
+                const headers = {};
+
+                // Если есть токен - добавляем его в заголовок
+                if (accessToken) {
+                    headers['Authorization'] = `Bearer ${accessToken}`;
+                    console.log('%cТокен обнаружен', 'color: #4caf50; font-weight: bold');
+                    console.log('%c   > Отправляю запрос в JanusProxy с токеном', 'color: #666');
+                    console.log('%c   > JanusProxy декодирует токен и извлечет userId', 'color: #666');
+                    console.log('%c   > JanusProxy запросит конфигурацию из ConfigService', 'color: #666');
+                } else {
+                    console.log('%cТокен отсутствует', 'color: #ff9800; font-weight: bold');
+                    console.log('%c   > Будет использована конфигурация по умолчанию из appsettings.json', 'color: #666');
+                }
+
+                console.log('%cЗапрос: GET /api/config', 'color: #2196f3');
+                const response = await fetch('/api/config', { headers });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
                 CONFIG = await response.json();
+
+                console.log('%cОтвет получен от сервера', 'color: #4caf50; font-weight: bold');
+                console.log('%cПолученная конфигурация:', 'color: #9c27b0; font-weight: bold');
+                console.log(CONFIG);
 
                 // Применяем конфигурацию
                 JANUS_URL = CONFIG.janus.url;
@@ -339,23 +391,42 @@
                 TURN_SERVERS = CONFIG.webrtc.turnServers || [];
                 OPUS_CONFIG = CONFIG.webrtc.opusCodec;
 
-                log('✓ Конфигурация загружена с сервера', 'success');
+                const configSource = accessToken ? 'из ConfigService (по userId из токена)' : 'по умолчанию (из appsettings.json)';
+                console.log(`%cИсточник конфигурации: ${configSource}`, 'color: #00bcd4; font-weight: bold');
+
+                console.log('%cSIP параметры:', 'color: #ff5722; font-weight: bold');
+                console.log('   - Username:', CONFIG.sip.username);
+                console.log('   - Domain:', CONFIG.sip.domain || CONFIG.sip.server);
+                console.log('   - Server:', CONFIG.sip.server);
+                console.log('   - Proxy:', CONFIG.sip.proxy);
+                console.log('   - Password:', '***' + (CONFIG.sip.password || '').slice(-3));
 
                 // Автозаполняем поля формы из конфига
-                // sipServer используется для proxy (должен быть IP для соединения)
-                document.getElementById('sipServer').value = CONFIG.sip.proxy.replace('sip:', '').split(':')[0];
+                console.log('%cЗаполняю форму полученными данными...', 'color: #9c27b0');
+
+                document.getElementById('sipServer').value = CONFIG.sip.server;
                 document.getElementById('sipUsername').value = CONFIG.sip.username;
-                // sipDomain используется для username realm (должен быть домен для аутентификации)
-                document.getElementById('sipDomain').value = CONFIG.sip.server.replace('sip:', '');
+                document.getElementById('sipDomain').value = CONFIG.sip.domain || CONFIG.sip.server.replace('sip:', '');
                 document.getElementById('sipPassword').value = CONFIG.sip.password;
-                document.getElementById('sipDisplayName').value = CONFIG.sip.displayName;
+                document.getElementById('sipDisplayName').value = CONFIG.sip.displayName || CONFIG.sip.username;
 
                 // Автозаполняем поле "Кому звонить"
-                const destUsername = CONFIG.sip.destinationUri.replace('sip:', '').split('@')[0];
-                document.getElementById('callUsername').value = destUsername;
+                if (CONFIG.sip.destinationUri) {
+                    const destUsername = CONFIG.sip.destinationUri.replace('sip:', '').split('@')[0];
+                    document.getElementById('callUsername').value = destUsername;
+                }
+
+                console.log('%cФорма заполнена', 'color: #4caf50; font-weight: bold');
+                console.log('%c━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 'color: #888');
+
+                const configSourceShort = accessToken ? 'из ConfigService по токену' : 'по умолчанию из appsettings';
+                log(`✓ Конфигурация загружена ${configSourceShort}`, 'success');
+
             } catch (error) {
-                log('⚠ Ошибка загрузки конфигурации, используем значения по умолчанию', 'warn');
+                console.log('%cОШИБКА ЗАГРУЗКИ КОНФИГУРАЦИИ', 'color: #f44336; font-weight: bold; font-size: 14px');
                 console.error(error);
+                console.log('%c━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 'color: #888');
+                log('⚠ Ошибка загрузки конфигурации, используем значения по умолчанию', 'warn');
             }
         }
 
@@ -1053,30 +1124,59 @@
         // Инициализация приложения
         (async function init() {
             try {
+                console.log('%c━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 'color: #888');
+                console.log('%cИНИЦИАЛИЗАЦИЯ ПРИЛОЖЕНИЯ', 'color: #00bcd4; font-weight: bold; font-size: 14px');
+                console.log('%c━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 'color: #888');
+
                 log('Страница загружена', 'success');
                 updateRegistrationStatus('⏳ Инициализация...', 'info');
 
                 // Проверяем наличие токена
+                console.log('%cПроверка наличия сохраненных токенов...', 'color: #9c27b0');
                 accessToken = getTokenFromSource();
 
                 if (accessToken) {
                     // Токен найден в localStorage
-                    console.log('Access Token загружен из localStorage:', accessToken);
+                    console.log('%cТокен найден в localStorage', 'color: #4caf50; font-weight: bold');
+                    console.log('%cAccess Token (начало):', accessToken.substring(0, 50) + '...', 'color: #666');
 
                     // Получаем refresh токен из localStorage
                     refreshToken = localStorage.getItem('refreshToken');
                     if (refreshToken) {
-                        console.log('Refresh Token загружен из localStorage:', refreshToken);
+                        console.log('%cRefresh Token найден', 'color: #4caf50');
                         startTokenRefresh();
+                        console.log('%cАвтообновление токенов запущено', 'color: #00bcd4');
                     }
 
-                    updateRegistrationStatus('Авторизован', 'success');
+                    updateRegistrationStatus('⏳ Загрузка конфигурации...', 'info');
+
+                    // Загружаем конфигурацию с токеном
+                    await loadConfig();
+
+                    updateRegistrationStatus('✓ Готов к работе', 'success');
+                    console.log('%c━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 'color: #888');
+                    console.log('%cИнициализация завершена успешно', 'color: #4caf50; font-weight: bold');
+                    console.log('%c━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 'color: #888');
                 } else {
                     // Токен не найден
+                    console.log('%cТокен не найден в localStorage', 'color: #ff9800; font-weight: bold');
+                    console.log('%c   > Будет использована конфигурация по умолчанию', 'color: #666');
+                    console.log('%c   > Войдите для загрузки персональной конфигурации', 'color: #666');
+
+                    // Загружаем конфигурацию по умолчанию
+                    await loadConfig();
                     updateRegistrationStatus('Войдите для продолжения', 'info');
+
+                    console.log('%c━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 'color: #888');
+                    console.log('%cИнициализация завершена (без авторизации)', 'color: #ff9800; font-weight: bold');
+                    console.log('%c━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 'color: #888');
                 }
 
             } catch (error) {
+                console.log('%cОШИБКА ИНИЦИАЛИЗАЦИИ', 'color: #f44336; font-weight: bold; font-size: 14px');
+                console.error(error);
+                console.log('%c━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 'color: #888');
+
                 log(`✗ Ошибка инициализации: ${error}`, 'error');
                 updateRegistrationStatus('✗ Ошибка инициализации', 'error');
             }
