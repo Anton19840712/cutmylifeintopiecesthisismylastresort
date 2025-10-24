@@ -363,10 +363,6 @@ app.Map(janusProxyPath, janusApp =>
     });
 });
 
-// Статические файлы из папки wwwroot
-app.UseDefaultFiles();
-app.UseStaticFiles();
-
 // Запуск сервера
 Console.WriteLine("╔════════════════════════════════════════════════════════════╗");
 Console.WriteLine("║  Janus Proxy Server (ASP.NET Core)                         ║");
@@ -375,10 +371,8 @@ Console.WriteLine($"  Environment:  {app.Environment.EnvironmentName}");
 Console.WriteLine($"  HTTP:         {serverUrls}");
 Console.WriteLine($"  Janus Proxy:  {serverUrls}{janusProxyPath} → {janusApiUrl}/janus");
 Console.WriteLine($"  Config API:   {serverUrls}/api/config");
-var staticFilesPath = builder.Configuration.GetSection("StaticFiles")["RootPath"] ?? "wwwroot";
-Console.WriteLine($"  Static Files: ./{staticFilesPath}");
 Console.WriteLine();
-Console.WriteLine($"Откройте {serverUrls} в браузере");
+Console.WriteLine($"Статические файлы отдает nginx");
 Console.WriteLine();
 
 app.Run();
