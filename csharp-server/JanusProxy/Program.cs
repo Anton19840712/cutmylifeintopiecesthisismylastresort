@@ -76,19 +76,65 @@ app.MapGet("/api/config", async (HttpContext context) =>
 
             if (!string.IsNullOrEmpty(userId))
             {
-                // Запрашиваем конфигурацию из ConfigService
-                var configServiceUrl = builder.Configuration["ConfigService:Url"] ?? "http://localhost:6023";
-                var requestUrl = $"{configServiceUrl}/api/configurations/internal/user/{userId}";
+                // Шаг 1: Проверяем здоровье Eureka
+                var eurekaUrl = builder.Configuration["Eureka:ServerUrl"] ?? "http://localhost:8761/eureka";
+                var serviceName = builder.Configuration["ConfigService:ServiceName"] ?? "CONFIG-SERVICE";
 
-                Console.WriteLine($"[Config API] Requesting ConfigService:");
-                Console.WriteLine($"[Config API]   URL: {requestUrl}");
-                Console.WriteLine($"[Config API]   userId: {userId}");
+                Console.WriteLine($"[Config API] Step 1: Health check Eureka");
+                var eurekaHealthy = await CheckEurekaHealth(eurekaUrl);
 
-                using var httpClient = new HttpClient();
-                httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
+                if (!eurekaHealthy)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine($"[Config API] ✗ Cannot proceed: Eureka is not available");
+                    Console.ResetColor();
+                }
+                else
+                {
+                    // Шаг 2: Ищем ConfigService в Eureka
+                    Console.WriteLine($"[Config API] Step 2: Discover ConfigService from Eureka");
+                    Console.WriteLine($"[Config API]   Eureka URL: {eurekaUrl}");
+                    Console.WriteLine($"[Config API]   Service Name: {serviceName}");
 
-                var response = await httpClient.GetAsync(requestUrl);
-                Console.WriteLine($"[Config API] ConfigService response: {response.StatusCode}");
+                    var configServiceUrl = await DiscoverServiceFromEureka(eurekaUrl, serviceName);
+
+                    if (string.IsNullOrEmpty(configServiceUrl))
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine($"[Config API] ✗ ConfigService not found in Eureka");
+                        Console.ResetColor();
+                    }
+                    else
+                    {
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.WriteLine($"[Config API] ✓ ConfigService discovered: {configServiceUrl}");
+                        Console.ResetColor();
+
+                        // Шаг 3: Проверяем здоровье ConfigService
+                        Console.WriteLine($"[Config API] Step 3: Health check ConfigService");
+                        var configServiceHealthy = await CheckServiceHealth(configServiceUrl, serviceName);
+
+                        if (!configServiceHealthy)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine($"[Config API] ✗ Cannot proceed: ConfigService is not healthy");
+                            Console.ResetColor();
+                        }
+                        else
+                        {
+                            // Шаг 4: Запрашиваем конфигурацию
+                            Console.WriteLine($"[Config API] Step 4: Request configuration");
+                            var requestUrl = $"{configServiceUrl}/api/configurations/internal/user/{userId}";
+
+                            Console.WriteLine($"[Config API] Requesting ConfigService:");
+                            Console.WriteLine($"[Config API]   URL: {requestUrl}");
+                            Console.WriteLine($"[Config API]   userId: {userId}");
+
+                            using var httpClient = new HttpClient();
+                            httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
+
+                            var response = await httpClient.GetAsync(requestUrl);
+                            Console.WriteLine($"[Config API] ConfigService response: {response.StatusCode}");
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -166,6 +212,9 @@ app.MapGet("/api/config", async (HttpContext context) =>
                     var errorBody = await response.Content.ReadAsStringAsync();
                     Console.WriteLine($"[Config API] Error body: {errorBody}");
                     Console.ResetColor();
+                }
+                        }
+                    }
                 }
             }
             else
@@ -335,6 +384,157 @@ Console.WriteLine();
 app.Run();
 
 // Helper методы
+static async Task<bool> CheckEurekaHealth(string eurekaUrl)
+{
+    try
+    {
+        Console.WriteLine($"[Eureka Health] Checking Eureka health: {eurekaUrl}");
+
+        using var httpClient = new HttpClient();
+        httpClient.Timeout = TimeSpan.FromSeconds(5);
+
+        var response = await httpClient.GetAsync($"{eurekaUrl}/apps");
+
+        if (response.IsSuccessStatusCode)
+        {
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine($"[Eureka Health] ✓ Eureka is healthy");
+            Console.ResetColor();
+            return true;
+        }
+        else
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine($"[Eureka Health] ✗ Eureka returned {response.StatusCode}");
+            Console.ResetColor();
+            return false;
+        }
+    }
+    catch (Exception ex)
+    {
+        Console.ForegroundColor = ConsoleColor.Red;
+        Console.WriteLine($"[Eureka Health] ✗ Eureka is not reachable: {ex.Message}");
+        Console.ResetColor();
+        return false;
+    }
+}
+
+static async Task<bool> CheckServiceHealth(string serviceUrl, string serviceName)
+{
+    try
+    {
+        Console.WriteLine($"[Service Health] Checking {serviceName} health: {serviceUrl}/health");
+
+        using var httpClient = new HttpClient();
+        httpClient.Timeout = TimeSpan.FromSeconds(5);
+
+        var response = await httpClient.GetAsync($"{serviceUrl}/health");
+
+        if (response.IsSuccessStatusCode)
+        {
+            var responseBody = await response.Content.ReadAsStringAsync();
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine($"[Service Health] ✓ {serviceName} is healthy");
+            Console.WriteLine($"[Service Health]   Response: {responseBody.Substring(0, Math.Min(100, responseBody.Length))}");
+            Console.ResetColor();
+            return true;
+        }
+        else
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine($"[Service Health] ✗ {serviceName} returned {response.StatusCode}");
+            Console.ResetColor();
+            return false;
+        }
+    }
+    catch (Exception ex)
+    {
+        Console.ForegroundColor = ConsoleColor.Red;
+        Console.WriteLine($"[Service Health] ✗ {serviceName} is not reachable: {ex.Message}");
+        Console.ResetColor();
+        return false;
+    }
+}
+
+static async Task<string> DiscoverServiceFromEureka(string eurekaUrl, string serviceName)
+{
+    try
+    {
+        Console.WriteLine($"[Eureka] Querying Eureka for service: {serviceName}");
+
+        using var httpClient = new HttpClient();
+        httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
+
+        var response = await httpClient.GetAsync($"{eurekaUrl}/apps/{serviceName}");
+
+        if (!response.IsSuccessStatusCode)
+        {
+            Console.WriteLine($"[Eureka] Service {serviceName} not found in Eureka (HTTP {response.StatusCode})");
+            return string.Empty;
+        }
+
+        var responseBody = await response.Content.ReadAsStringAsync();
+        using var doc = JsonDocument.Parse(responseBody);
+
+        // Парсим ответ Eureka: application.instance[0]
+        if (doc.RootElement.TryGetProperty("application", out var appElement))
+        {
+            if (appElement.TryGetProperty("instance", out var instancesElement))
+            {
+                var instances = instancesElement.EnumerateArray().ToList();
+
+                if (instances.Count > 0)
+                {
+                    var instance = instances[0];
+
+                    // Получаем hostName и port
+                    var hostName = instance.TryGetProperty("hostName", out var hostElement)
+                        ? hostElement.GetString()
+                        : null;
+
+                    var port = 0;
+                    if (instance.TryGetProperty("port", out var portElement))
+                    {
+                        if (portElement.TryGetProperty("$", out var portValueElement))
+                        {
+                            port = portValueElement.GetInt32();
+                        }
+                    }
+
+                    var status = instance.TryGetProperty("status", out var statusElement)
+                        ? statusElement.GetString()
+                        : "UNKNOWN";
+
+                    Console.WriteLine($"[Eureka] Found instance:");
+                    Console.WriteLine($"[Eureka]   Host: {hostName}");
+                    Console.WriteLine($"[Eureka]   Port: {port}");
+                    Console.WriteLine($"[Eureka]   Status: {status}");
+
+                    if (!string.IsNullOrEmpty(hostName) && port > 0)
+                    {
+                        // Заменяем host.docker.internal на localhost для локального доступа
+                        if (hostName == "host.docker.internal")
+                        {
+                            hostName = "localhost";
+                            Console.WriteLine($"[Eureka]   Replacing host.docker.internal with localhost");
+                        }
+
+                        return $"http://{hostName}:{port}";
+                    }
+                }
+            }
+        }
+
+        Console.WriteLine($"[Eureka] No valid instances found for {serviceName}");
+        return string.Empty;
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"[Eureka] Error discovering service: {ex.Message}");
+        return string.Empty;
+    }
+}
+
 static string ExtractUserIdFromToken(string token)
 {
     try
